@@ -7,8 +7,8 @@
 
 ## 目录：
 
-### 设计思想
-- [ ] [学习笔记：多线程1](https://github.com/4Oranges/Blog/tree/master/articles/004.md)
+### 设计方法
+- [x] [学习笔记：多线程1](https://github.com/4Oranges/Blog/tree/master/articles/004.md)
 
 ### C++部分
 - [x] [使用C++标准库获取线程id字符串](https://github.com/4Oranges/Blog/tree/master/articles/001.md)  
