@@ -16,9 +16,4 @@
 - [x] [智能指针的使用技巧](https://github.com/4Oranges/Blog/tree/master/articles/003.md)  
 
 ### PHP部分
-- [ ] []()
-- [ ] []()
-- [ ] []()
-- [ ] []()
-- [ ] []()
-- [ ] []()
+- [x] [B-S间的交互方式](https://github.com/4Oranges/Blog/tree/master/articles/005.md)
