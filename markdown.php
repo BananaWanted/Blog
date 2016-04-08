@@ -1,6 +1,5 @@
 <?php
-
-/* 
+/*
  * Copyright 2015 master.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,16 +80,20 @@ $title = trim($title);
         marked.setOptions({
             highlight: function (code, lang) {
                 console.log(lang);
-                return hljs.highlight(lang, code).value;
+                if (lang === undefined) {
+                    return hljs.highlightAuto(code).value;
+                } else {
+                    return hljs.highlight(lang, code).value;
+                }
             }
         });
-        $("#control .md").click(function(){
+        $("#control .md").click(function () {
             $("#markdown").html("<pre>" + content + "</pre");
         });
-        $("#control .html").click(function(){
+        $("#control .html").click(function () {
             $("#markdown").html(marked(content));
         });
-        
+
         $("#control .html").click();
     </script>
 </html>
