@@ -38,17 +38,37 @@ $title = trim($title);
         <link rel="stylesheet" href="librarie/css/blogarticale.css">
         <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
+        <style>
+            #control div {
+                margin-top: 5px;
+                margin-right: 10px;
+                border: black solid thin;
+                width: 70px;
+                height: 70px;
+                text-align: center;
+                align-content: center;
+                line-height: 35px;
+                font-size: 1em;
+                font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", "FontAwesome", sans-serif;
+                float: right;
+            }
+            #control div:hover {
+                border-color: red;
+                color: red;
+                cursor:pointer;
+            }
+        </style>
         <script>
             var content = <?php echo json_encode($content); ?>;
         </script>
     </head>
     <body>
-        <div id="control">
-            <button class="html">Show HTML</button>
-            <button class="md">Show Markdown</button>
-        </div>
         <div class="content">
             <div class="blogarticale" id="markdown"></div>
+        </div>
+        <div id="control">
+            <div class="html btn btn-4">Show HTML</div>
+            <div class="md btn btn-2 clear">Show MD</div>
         </div>
     </body>
     <script>
