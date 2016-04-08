@@ -10,17 +10,6 @@
 
 <h1>PHP BASIC TESTING...</h1>
 	<?php
-		$arraytest=array("abc",4,'x',0xdf,012,"胖子是傻逼");
-		echo("<h2>for</h2>");
-		for($i=0;$i<count($arraytest);$i++)
-		{
-			echo($arraytest[$i]."<br />");
-		}
-		echo("<h2>foreach</h2>");
-		foreach($arraytest as $index=>$value)
-		{
-			echo("key=$index, value=$value"."<br />");
-		}
 		echo("<br /><h2>\$_SERVER</h2>");
 		foreach($_SERVER as $name=>$value)
 		{
