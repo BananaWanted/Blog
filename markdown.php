@@ -57,65 +57,6 @@
 		#$myfile = fopen("webdictionary.txt", "r") or die("Unable to open file!");
 		#echo $myfile;
 	?>
-	
-<br /><hr /><br /><h1>File Testing...</h1>
-	<?php
-        /*
-		$file = fopen('000.a',r) or die('Can not open file');
-	?>
-<h2>File Begining...</h2>
-	<?php
-		while(!feof($file)) {
-			echo '<pre>'.htmlspecialchars(fgets($file)).'<br /></pre>';
-		}
-		fclose($file);
-	?>
-<h2>File Ending...</h2>
-<h2>Writting File...</h2>
-	<?php
-		$file=fopen('000.a',wb) or die('Can not open file');
-		fwrite($file,"a line with \\n end\n");
-		fwrite($file,"a line with \\r\\n end\r\n");
-		#fwrite($file,"a line with \\n\\r end\n\r");  #Error
-		fwrite($file,"a line with \\r end\r");
-         */
-	?>
-<hr />
-<h1>File Uploding Testing...</h1>
-	<?php
-		//phpinfo();
-	?>
-	
-<form action="fileupload.php" method="post" enctype="multipart/form-data">
-<div style="border:1px solid; padding:0; margin:0;" ><label style="border:1px solid" for="file1">Filename1:</label>
-<input style="border:1px solid" type="file" name="file1" id="file1" /> </div>
-<div style="border:1px solid; padding:0; margin:0;" ><label style="border:1px solid" for="file2">Filename2:</label>
-<input style="border:1px solid" type="file" name="file2" id="file2" /> </div>
-<br />
-<input type="submit" name="submit" value="upload" />
-</form>
-
-<hr />
-<pre>
-<?php
-$part='abc.def.ghi.jkl.mno.pqr.stu.vwx.yz';
-$epart=explode('.', $part);
-$epartlist=new ArrayIterator($epart);
-foreach ($epartlist as $value)
-    echo $value;
-$rererere=array_pop($epart);
-echo is_array($rererere)?'true':'false';
-echo $rererere;
-?>
-
-<?php
-
-echo (int)false;
-error_reporting('reporting_costom_error...');
-echo 'over';
-?>
-</pre>
-
 </div>
 </body>
 </html>
