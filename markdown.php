@@ -19,6 +19,11 @@ defined('_ZEXEC') or define("_ZEXEC", 1);
 require_once 'base.php';
 
 $path = ZPATH_SERVER_ROOT . $_REQUEST['path'];
+if (!file_exists($path)) {
+    header("HTTP/1.0 404 Not Found");
+    echo "Error: File Not Found!";
+    die;
+}
 $content = file_get_contents($path);
 //$title = strstr($content, "\n");
 $title = strtok($content, "\n");
