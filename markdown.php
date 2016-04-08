@@ -81,7 +81,7 @@ $title = trim($title);
             <div class="blogarticale" id="markdown"></div>
         </div>
         <div id="control">
-            <div class="back clear">Back</div>
+            <div class="back clear">HOME</div>
             <div class="html clear">Show HTML</div>
             <div class="md clear">Show MD</div>
         </div>
