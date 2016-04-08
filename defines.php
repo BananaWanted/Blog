@@ -23,6 +23,7 @@ defined('_ZEXEC') or die;
 define('_ZDEFINE', 1);
 define('_ZPHP_VERSION', 'PHP version 5.4+ is required.');
 define('ZPATH_ROOT', __DIR__);
+define('ZPATH_SERVER_ROOT', $_SERVER['DOCUMENT_ROOT']);
 define('ZPATH_LOG', ZPATH_ROOT . DIRECTORY_SEPARATOR . 'logs');
 define('ZPATH_ACCESS_LOG', ZPATH_ROOT . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'access.log');
 define('ZPATH_ERROR_LOG', ZPATH_ROOT . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'error.log');
