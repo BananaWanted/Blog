@@ -39,6 +39,12 @@ $title = trim($title);
         <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
         <style>
+            #control {
+                position: fixed;
+                height: 160px;
+                bottom: 20px;
+                right: 0;
+            }
             #control div {
                 margin-top: 5px;
                 margin-right: 10px;
