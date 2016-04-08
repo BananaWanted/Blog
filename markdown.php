@@ -40,7 +40,7 @@ $title = trim($title);
         <style>
             #control {
                 position: fixed;
-                height: 160px;
+                height: 240px;
                 bottom: 20px;
                 right: 0;
             }
@@ -57,6 +57,9 @@ $title = trim($title);
                 font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", "FontAwesome", sans-serif;
                 float: right;
             }
+            #control .back{
+                line-height: 70px;
+            }
             #control div:hover {
                 border-color: red;
                 color: red;
@@ -72,8 +75,9 @@ $title = trim($title);
             <div class="blogarticale" id="markdown"></div>
         </div>
         <div id="control">
-            <div class="html btn btn-4">Show HTML</div>
-            <div class="md btn btn-2 clear">Show MD</div>
+            <div class="back clear">Back</div>
+            <div class="html clear">Show HTML</div>
+            <div class="md clear">Show MD</div>
         </div>
     </body>
     <script>
@@ -89,6 +93,9 @@ $title = trim($title);
         });
         $("#control .md").click(function () {
             $("#markdown").html("<pre>" + content + "</pre");
+        });
+        $("#control .back").click(function () {
+            window.location.href = "/";
         });
         $("#control .html").click(function () {
             $("#markdown").html(marked(content));
