@@ -32,10 +32,10 @@ $title = trim($title);
     <head>
         <meta charset="UTF-8">
         <title><?php echo $title; ?> - 4Oranges Blog </title>
-        <script src="librarie/js/jquery.js"></script>
-        <script src="librarie/js/marked.js"></script>
-        <link rel="stylesheet" href="librarie/css/base.css">
-        <link rel="stylesheet" href="librarie/css/blogarticale.css">
+        <script src="/librarie/js/jquery.js"></script>
+        <script src="/librarie/js/marked.js"></script>
+        <link rel="stylesheet" href="/librarie/css/base.css">
+        <link rel="stylesheet" href="/librarie/css/blogarticale.css">
         <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
         <style>
