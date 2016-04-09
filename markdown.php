@@ -44,9 +44,11 @@ $title = trim($title);
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
         <style>
             #background {
+                background-position: top center;
+                background-repeat: no-repeat;
                 background-image: url(/banana.png);
                 background-size: 50%;
-                width: 1800px;
+                width: 2000px;
                 height: 1200px;
                 position: fixed;
                 z-index: -10;
