@@ -21,4 +21,3 @@ _没什么技术的技术博客_
 
 ## 友链
 - [范神的博客](http://fanzheng.org)
-- [foo](http://blog.fuckcugb.com)
