@@ -18,3 +18,6 @@
 
 ### PHP部分
 - √ [B-S间的交互方式](/articles/005.md)
+
+### Photoshop
+- [Keyboard Shortcut To Fill A Photoshop Layer (Or Selection) With The Background or Foreground Color](/articles/007.md)
