@@ -43,6 +43,14 @@ $title = trim($title);
         <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
         <style>
+            #background {
+                background-image: url(/banana.png);
+                background-size: 50%;
+                width: 1800px;
+                height: 1200px;
+                position: fixed;
+                z-index: -10;
+            }
             #control {
                 position: fixed;
                 height: 240px;
@@ -82,6 +90,7 @@ $title = trim($title);
         </script>
     </head>
     <body>
+        <div id="background"></div>
         <div class="content">
             <div class="blogarticale" id="markdown"></div>
         </div>
