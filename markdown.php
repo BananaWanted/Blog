@@ -75,13 +75,13 @@ $title = trim($title);
                 z-index: -10;
             }
             #control {
-                background-color: white;
                 position: fixed;
                 height: 240px;
                 bottom: 20px;
                 right: 0;
             }
             #control div {
+                background-color: rgba(255,255,255,0.8);
                 margin-top: 5px;
                 margin-right: 10px;
                 border: black solid thin;
