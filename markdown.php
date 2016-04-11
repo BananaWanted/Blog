@@ -66,15 +66,16 @@ $title = trim($title);
         <style>
             #background {
                 background-position: top center;
-                background-repeat: no-repeat;
+                /*background-repeat: no-repeat;*/
                 background-image: url(/banana.png);
-                background-size: 50%;
+                background-size: 30%;
                 width: 2000px;
                 height: 1200px;
                 position: fixed;
                 z-index: -10;
             }
             #control {
+                background-color: white;
                 position: fixed;
                 height: 240px;
                 bottom: 20px;
