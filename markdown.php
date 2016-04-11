@@ -123,11 +123,8 @@ $title = trim($title);
         </div>
     </body>
     <script>
-        window.onresize = function() {
-            $("#background").width($(window).width());
-            $("#background").height($(window).height());
-        }
-        window.onresize();
+        var $window = $(window);
+        $window.resize(function(){$("#background").width($window.width()).height($window.height());}).resize();
         marked.setOptions({
             highlight: function (code, lang) {
                 console.log(lang);
