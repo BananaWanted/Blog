@@ -68,9 +68,7 @@ $title = trim($title);
                 background-position: top center;
                 /*background-repeat: no-repeat;*/
                 background-image: url(/banana.png);
-                background-size: 30%;
-                width: 2000px;
-                height: 1200px;
+                background-size: 350px;
                 position: fixed;
                 z-index: -10;
             }
@@ -120,11 +118,16 @@ $title = trim($title);
         </div>
         <div id="control">
             <div class="back clear">HOME</div>
-            <div class="html clear">Show HTML</div>
-            <div class="md clear">Show MD</div>
+            <div class="html clear">Show<br>HTML</div>
+            <div class="md clear">Show<br>MD</div>
         </div>
     </body>
     <script>
+        window.onresize = function() {
+            $("#background").width($(window).width());
+            $("#background").height($(window).height());
+        }
+        window.onresize();
         marked.setOptions({
             highlight: function (code, lang) {
                 console.log(lang);
