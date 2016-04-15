@@ -61,9 +61,9 @@ $title = trim($title);
         <script src="/librarie/js/marked.js"></script>
         <link rel="stylesheet" href="/librarie/css/base.css">
         <link rel="stylesheet" href="/librarie/css/blogarticle.css">
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
-        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
-        <script src="https://npmcdn.com/imagesloaded@4.1/imagesloaded.pkgd.min.js"></script>
+        <script src="/librarie/js/highlight.min.js"></script>
+        <link rel="stylesheet" href="/librarie/css/highlight.min.css">
+        <script src="/librarie/js/imagesloaded.min.js"></script>
         <style>
             #background {
                 background-position: top center;
@@ -128,7 +128,6 @@ $title = trim($title);
     <script>
         var $window = $(window);
         var $article = $(".blogarticle");
-
         $window.resize(function () {
             $("#background").width($window.width()).height($window.height());
             $("#container").width($window.width()).height($window.height());
@@ -153,12 +152,17 @@ $title = trim($title);
             $("#markdown").html(marked(content));
             var img_width = $(".blogarticle p").width();
             $article.imagesLoaded().progress(function (loded, img) {
-                if (img.isLoaded && img.img.width > img_width) {
-                    img.img.width = img_width;
+                console.log(img);
+                if (img.isLoaded) {
+                    if (img.img.naturalWidth > img_width) {
+                        $(img.img).css("width", img_width);
+                    } else {
+                        $(img.img).css("width", img.img.naturalWidth);
+                    }
                 }
             });
         });
-        
+
         $("#control .html").click();
     </script>
 </html>

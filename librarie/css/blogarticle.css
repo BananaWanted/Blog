@@ -65,6 +65,9 @@
 {
     margin:1em;
 }
+.blogarticle img {
+    width: 100px;
+}
 .blogarticle table
 {
     border-collapse: collapse;
@@ -76,5 +79,5 @@
     padding:1em;
 }
 .blogarticle h1, .blogarticle h2, .blogarticle h3, .blogarticle h4, .blogarticle h5, .blogarticle h6 {
-    font-family: "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;;
+    font-family: "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 }
