@@ -3,7 +3,7 @@
 
 .content
 {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.95);
     width:60em;
     min-width:850px;
     margin:40px auto;
@@ -21,12 +21,19 @@
 }
 .blogarticle h2
 {
-    font-size:1.2em;
+    font-size:1.3em;
     line-height:3em;
 
 }
 .blogarticle h3
 {
+    font-size:1.2em;
+    line-height:1.5em;
+
+}
+.blogarticle h4
+{
+    font-size:1.1em;
     line-height:1.5em;
 
 }
@@ -41,15 +48,18 @@
 .blogarticle ul
 {
     list-style-type:disc;
-    padding-left:3em;
-    margin:2em 0;
+    padding-left:2em;
+    margin:1em;
 }
 .blogarticle ol
 {
     list-style-type:decimal;
-    padding-left:3em;
-    margin:2em 0;
+    padding-left:2em;
+    margin:1em;
     font-size:1em;
+}
+.blogarticle li {
+    margin-bottom: 1em;
 }
 .blogarticle p
 {
@@ -64,4 +74,7 @@
 {
     border: 1px solid black;
     padding:1em;
+}
+.blogarticle h1, .blogarticle h2, .blogarticle h3, .blogarticle h4, .blogarticle h5, .blogarticle h6 {
+    font-family: "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;;
 }

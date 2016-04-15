@@ -80,7 +80,7 @@ $title = trim($title);
                 right: 0;
             }
             #control div {
-                background-color: rgba(255,255,255,0.8);
+                background-color: rgba(255,255,255,0.95);
                 margin-top: 5px;
                 margin-right: 10px;
                 border: black solid thin;
@@ -114,8 +114,10 @@ $title = trim($title);
     </head>
     <body>
         <div id="background"></div>
-        <div class="content">
-            <div class="blogarticle" id="markdown"></div>
+        <div id="container">
+            <div class="content">
+                <div class="blogarticle" id="markdown"></div>
+            </div>
         </div>
         <div id="control">
             <div class="back clear">HOME</div>
@@ -129,6 +131,7 @@ $title = trim($title);
 
         $window.resize(function () {
             $("#background").width($window.width()).height($window.height());
+            $("#container").width($window.width()).height($window.height());
         }).resize();
         marked.setOptions({
             highlight: function (code, lang) {
@@ -150,10 +153,10 @@ $title = trim($title);
             $("#markdown").html(marked(content));
         });
         $("#control .html").click();
-        
+
         var img_width = $(".blogarticle p").width();
         console.log(img_width);
-        $article.imagesLoaded().progress(function(loded, img) {
+        $article.imagesLoaded().progress(function (loded, img) {
             if (img.isLoaded && img.img.width > img_width) {
                 img.img.width = img_width;
             }
