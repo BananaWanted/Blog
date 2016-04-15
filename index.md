@@ -17,6 +17,8 @@ _没什么技术的技术博客_
 ### Photoshop
 - [Keyboard Shortcut To Fill A Photoshop Layer (Or Selection) With The Background or Foreground Color](/articles/007.md)
 
+### 杂项
+- [闷声作大死：把声卡变成示波器](/articles/008.md)
 ------
 
 ## 友链
