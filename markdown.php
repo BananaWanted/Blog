@@ -60,9 +60,10 @@ $title = trim($title);
         <script src="/librarie/js/jquery.js"></script>
         <script src="/librarie/js/marked.js"></script>
         <link rel="stylesheet" href="/librarie/css/base.css">
-        <link rel="stylesheet" href="/librarie/css/blogarticale.css">
+        <link rel="stylesheet" href="/librarie/css/blogarticle.css">
         <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
+        <script src="https://npmcdn.com/imagesloaded@4.1/imagesloaded.pkgd.min.js"></script>
         <style>
             #background {
                 background-position: top center;
@@ -114,7 +115,7 @@ $title = trim($title);
     <body>
         <div id="background"></div>
         <div class="content">
-            <div class="blogarticale" id="markdown"></div>
+            <div class="blogarticle" id="markdown"></div>
         </div>
         <div id="control">
             <div class="back clear">HOME</div>
@@ -124,7 +125,11 @@ $title = trim($title);
     </body>
     <script>
         var $window = $(window);
-        $window.resize(function(){$("#background").width($window.width()).height($window.height());}).resize();
+        var $article = $(".blogarticle");
+
+        $window.resize(function () {
+            $("#background").width($window.width()).height($window.height());
+        }).resize();
         marked.setOptions({
             highlight: function (code, lang) {
                 console.log(lang);
@@ -144,7 +149,15 @@ $title = trim($title);
         $("#control .html").click(function () {
             $("#markdown").html(marked(content));
         });
-
         $("#control .html").click();
+        
+        var img_width = $(".blogarticle p").width();
+        console.log(img_width);
+        $article.imagesLoaded().progress(function(loded, img) {
+            if (img.isLoaded && img.img.width > img_width) {
+                img.img.width = img_width;
+            }
+        });
+
     </script>
 </html>

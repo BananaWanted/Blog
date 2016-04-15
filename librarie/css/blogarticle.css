@@ -9,28 +9,28 @@
     margin:40px auto;
     line-height:1.6em;
 }
-.blogarticale
+.blogarticle
 {
     padding:2em;
 }
-.blogarticale h1
+.blogarticle h1
 {
     text-align:center;
     font-size:1.5em;
     line-height:2em;
 }
-.blogarticale h2
+.blogarticle h2
 {
     font-size:1.2em;
     line-height:3em;
 
 }
-.blogarticale h3
+.blogarticle h3
 {
     line-height:1.5em;
 
 }
-.blogarticale #time
+.blogarticle #time
 {
     display:block;
     color:#999;
@@ -38,29 +38,29 @@
     text-align:center;
     margin-bottom:2em;
 }
-.blogarticale ul
+.blogarticle ul
 {
     list-style-type:disc;
     padding-left:3em;
     margin:2em 0;
 }
-.blogarticale ol
+.blogarticle ol
 {
     list-style-type:decimal;
     padding-left:3em;
     margin:2em 0;
     font-size:1em;
 }
-.blogarticale p
+.blogarticle p
 {
     margin:1em;
 }
-.blogarticale table
+.blogarticle table
 {
     border-collapse: collapse;
 
 }
-.blogarticale table, .blogarticale th, .blogarticale td
+.blogarticle table, .blogarticle th, .blogarticle td
 {
     border: 1px solid black;
     padding:1em;
