@@ -151,16 +151,14 @@ $title = trim($title);
         });
         $("#control .html").click(function () {
             $("#markdown").html(marked(content));
+            var img_width = $(".blogarticle p").width();
+            $article.imagesLoaded().progress(function (loded, img) {
+                if (img.isLoaded && img.img.width > img_width) {
+                    img.img.width = img_width;
+                }
+            });
         });
+        
         $("#control .html").click();
-
-        var img_width = $(".blogarticle p").width();
-        console.log(img_width);
-        $article.imagesLoaded().progress(function (loded, img) {
-            if (img.isLoaded && img.img.width > img_width) {
-                img.img.width = img_width;
-            }
-        });
-
     </script>
 </html>
