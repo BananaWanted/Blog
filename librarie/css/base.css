@@ -123,6 +123,13 @@ ul, ol, dl
     list-style-type:none;
 }
 
+em {
+    font-style: italic;
+}
+strong {
+    font-weight: bold;
+}
+
 /*CUSTOMIZE*/
 
 html
@@ -133,12 +140,15 @@ html
 
 body
 {
-    font-family: Georgia, 'Times New Roman', "Avenir", "Segoe UI", "Lantinghei SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei",  Verdana, Aril, Times, serif, sans-serif;
-    font-weight: 400;
+    /*font-family: Georgia, 'Times New Roman', "Avenir", "Segoe UI", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei",  Verdana, Aril, Times, serif, sans-serif;*/
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-style: normal;
-    -webkit-font-smoothing: antialiased;
+    font-weight: normal;
+    font-size: 14px;
+    -webkit-font-smoothing: subpixel-antialiased;
     position: absolute;
     top: 0;
+    color: rgb(40, 40, 40);
 }
 
 #container {
@@ -180,113 +190,4 @@ a:link, a:visited, a:active, a:hover
     height: 0;
     clear: both;
     visibility: hidden;
-}
-
-
-/*STRUCTURE*/
-
-#commonheader
-{
-    background-color: #EEE;
-}
-#commonheader #mainnav
-{
-    margin-left:8%;
-}
-#commonheader #mainnav li
-{
-    width: 9em;
-    float: left;
-    overflow:hidden;
-}
-#commonheader #mainnav a:link,
-#commonheader #mainnav a:visited
-{
-    white-space: nowrap;
-    color:#666;
-    text-align: center;
-    text-decoration: none;
-    display: block;
-    text-transform: uppercase;
-    font-size: 1.2em;
-    /*padding-top: 10px;
-    padding-bottom: 10px;*/
-    line-height: 3em;/*代替上面两行，实现文字垂直居中*/
-}
-#commonheader #mainnav a:hover
-{
-    background-color:#ccc;
-    color:#333;
-}
-#commonheader #mainnav a:active
-{
-    background-color:#999;
-    color:#000;
-}
-
-
-#main
-{
-
-}
-
-#commonfooter
-{
-    /*white-space:nowrap;*/
-}
-
-#commonfooter #holder
-{
-    background:#ccc;
-    position:relative;
-    height:3.5em;
-}
-#commonfooter #links
-{
-    padding:0.5em;
-    position:absolute;
-    left:0;
-    top:0;
-}
-#commonfooter #links li
-{
-    margin:0.5em;
-    float:left;
-}
-/*#commonfooter #contact
-{
-        padding:1em;
-        position: absolute;
-        right: 0;
-        top: 0;
-        text-align:right;
-}
-#commonfooter #contact:first-line
-{
-        font-weight:bold;
-}*/
-#commonfooter #icons
-{
-    visibility:hidden;
-}
-#commonfooter #backtotop
-{
-    height:3.5em;
-    width:8em;
-    background:#ccc;
-    float:right;
-}
-#commonfooter #backtotop a
-{
-    display:block;
-    height:3.5em;
-    width:8em;
-    line-height:3.5em;
-    text-align:center;
-    text-transform:uppercase;
-}
-#commonfooter #information
-{
-    margin:1em;
-    text-align:center;
 }

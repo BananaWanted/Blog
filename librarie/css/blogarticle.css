@@ -1,10 +1,5 @@
 @charset "UTF-8";
 /* CSS Document */
-em
-{
-    font-style: italic;
-}
-
 .blogarticle
 {
     border: 1px solid;
@@ -93,5 +88,8 @@ em
     padding:1em;
 }
 .blogarticle h1, .blogarticle h2, .blogarticle h3, .blogarticle h4, .blogarticle h5, .blogarticle h6 , .blogarticle .time{
-    font-family: "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    /*font-family: "Lantinghei SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;*/
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    color: rgb(70, 70, 70);
 }
