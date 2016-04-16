@@ -13,3 +13,4 @@ _没什么技术的技术博客_
 - [RequireJS](http://requirejs.org/)
 - [Real Favicon Generator](http://realfavicongenerator.net/)
 - [imagesLoaded](http://imagesloaded.desandro.com/)
+- [DISQUS](https://disqus.com)
