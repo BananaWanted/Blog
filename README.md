@@ -1,4 +1,5 @@
-# BBB: Big Banana's Blog
+# 4 Oranges' Blog
+
 _没什么技术的技术博客_
 
 已迁移至独立站点：[blog.fuckcugb.com](http://blog.fuckcugb.com)
@@ -6,8 +7,6 @@ _没什么技术的技术博客_
 #### 依赖项：
 
 - [ZFrame](https://github.com/4Oranges/ZFrame)
-
-
 - [Marked](https://github.com/chjj/marked)
 - [jQuery](https://jquery.org)
 - [highlight.js](https://highlightjs.org/)
