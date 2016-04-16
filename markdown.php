@@ -133,7 +133,7 @@ $title = trim($title);
         
         $window.resize(function () {
             $("#background").width($window.width()).height($window.height());
-            $("#container").width($window.width()).height($window.height());
+            $("#container").width($window.width());
         }).resize();
         marked.setOptions({
             highlight: function (code, lang) {
