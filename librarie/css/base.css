@@ -124,18 +124,6 @@ ul, ol, dl
 }
 
 /*CUSTOMIZE*/
-html, body
-{
-    overflow: hidden;
-}
-#container {
-    position: fixed;
-    overflow: auto;
-    -webkit-transform: translateZ(0px);
-    -webkit-transform: translate3d(0,0,0);
-    -webkit-perspective: 1000;
-    -webkit-overflow-scrolling: touch;
-}
 
 html
 {
@@ -151,7 +139,10 @@ body
     -webkit-font-smoothing: antialiased;
 }
 
-
+#container {
+    margin: 0;
+    padding: 0;
+}
 
 a:link, a:visited, a:active, a:hover
 {
@@ -294,30 +285,4 @@ a:link, a:visited, a:active, a:hover
 {
     margin:1em;
     text-align:center;
-}
-
-
-.content {
-    margin:20px 0;
-    border: 1px solid;
-    border-color: #e5e5e5 #dbdbdb #d2d2d2;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
-    -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
-    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
-}
-
-.content, .rounded
-{
-    border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    -o-border-radius: 3px;
-    -khtml-border-radius: 3px;
-}
-
-/*CONTENT*/
-
-em
-{
-    font-style: italic;
 }

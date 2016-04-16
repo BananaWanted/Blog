@@ -1,16 +1,26 @@
 @charset "UTF-8";
 /* CSS Document */
-
-.content
+em
 {
-    background-color: rgba(255, 255, 255, 0.95);
-    width:60em;
-    min-width:850px;
-    margin:40px auto;
-    line-height:1.6em;
+    font-style: italic;
 }
+
 .blogarticle
 {
+    border: 1px solid;
+    border-color: rgb(200, 200, 200);
+    
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -o-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    
+    background-color: rgba(255, 255, 255, 1);
+    line-height:1.6em;
+    
+    margin: 2em auto 0 auto;
+    width: 60em;
     padding:2em;
 }
 .blogarticle h1
@@ -67,6 +77,7 @@
 }
 .blogarticle img {
     width: 100px;
+    margin: 1em auto 2em auto;
 }
 .blogarticle table
 {

@@ -72,6 +72,8 @@ $title = trim($title);
                 background-size: 350px;
                 position: fixed;
                 z-index: -10;
+                top: 0;
+                left: 0;
             }
             #control {
                 position: fixed;
@@ -113,16 +115,14 @@ $title = trim($title);
         </script>
     </head>
     <body>
-        <div id="background"></div>
         <div id="container">
-            <div class="content">
-                <div class="blogarticle" id="markdown"></div>
+            <div id="background"></div>
+            <div class="blogarticle" id="markdown"></div>
+            <div id="control">
+                <div class="back clear">HOME</div>
+                <div class="html clear">Show<br>HTML</div>
+                <div class="md clear">Show<br>MD</div>
             </div>
-        </div>
-        <div id="control">
-            <div class="back clear">HOME</div>
-            <div class="html clear">Show<br>HTML</div>
-            <div class="md clear">Show<br>MD</div>
         </div>
     </body>
     <script>
