@@ -1,7 +1,7 @@
 # 4 Oranges' Blog
+Checkout this site on <a href="https://github.com/4Oranges/Blog">GitHub</a>
 
 _没什么技术的技术博客_
-
 
 ### 设计方法
 - [学习笔记：多线程1](/articles/004.md)

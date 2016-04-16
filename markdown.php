@@ -118,7 +118,11 @@ $title = trim($title);
         </style>
         <script>
             var content = <?php echo json_encode($elements); ?>;
-            var path = '<?php echo $path; ?>';
+            var path = '<?php echo $_REQUEST['path']; ?>';
+            var disable_disqus_on = [
+                "index.md",
+                "README.md"
+            ];
         </script>
     </head>
     <body>
@@ -140,15 +144,19 @@ $title = trim($title);
         var disqus_config = function () {
             this.page.url = 'http://blog.fuckcugb.com' + path;
             this.page.identifier = path;
+            //console.log(this.page.url);
+            //console.log(this.page.identifier);
         };
-        (function () {
-            var d = document, s = d.createElement('script');
+        if (disable_disqus_on.indexOf(path) < 0) {
+            (function () {
+                var d = document, s = d.createElement('script');
 
-            s.src = '//4oranges.disqus.com/embed.js';
+                s.src = '//4oranges.disqus.com/embed.js';
 
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-        })();
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        }
     </script>
     <script>
         var $window = $(window);
@@ -194,7 +202,7 @@ $title = trim($title);
                     }
                 }
             });
-            if (content[1].trim()) {
+            if (disable_disqus_on.indexOf(path) < 0) {
                 $discuss.show();
             }
         });
