@@ -198,7 +198,6 @@ $title = trim($title);
                 $discuss.show();
             }
         });
-
         $("#control .html").click();
     </script>
 </html>
