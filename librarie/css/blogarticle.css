@@ -47,14 +47,6 @@ em
     line-height:1.5em;
 
 }
-.blogarticle #time
-{
-    display:block;
-    color:#999;
-    font-style:italic;
-    text-align:center;
-    margin-bottom:2em;
-}
 .blogarticle ul
 {
     list-style-type:disc;

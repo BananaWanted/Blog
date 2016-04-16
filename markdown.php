@@ -105,6 +105,10 @@ $title = trim($title);
                 color: red;
                 cursor:pointer;
             }
+            #disqus_thread {
+                margin-top: 10em;
+                display: none;
+            }
             pre {
                 margin-left: 40px;
                 margin-right: 40px;
@@ -114,12 +118,16 @@ $title = trim($title);
         </style>
         <script>
             var content = <?php echo json_encode($elements); ?>;
+            var path = '<?php echo $path; ?>';
         </script>
     </head>
     <body>
         <div id="container">
             <div id="background"></div>
-            <div class="blogarticle" id="markdown"></div>
+            <div class="blogarticle">
+                <div id="markdown"></div>
+                <div id="disqus_thread"></div>
+            </div>
             <div id="control">
                 <div class="back clear">HOME</div>
                 <div class="html clear">Show<br>HTML</div>
@@ -128,10 +136,27 @@ $title = trim($title);
         </div>
     </body>
     <script>
+
+        var disqus_config = function () {
+            this.page.url = 'http://blog.fuckcugb.com' + path;
+            this.page.identifier = path;
+        };
+        (function () {
+            var d = document, s = d.createElement('script');
+
+            s.src = '//4oranges.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <script>
         var $window = $(window);
         var $article = $(".blogarticle");
         var $container = $("#container");
-        
+        var $discuss = $("#disqus_thread");
+        var $markdown = $("#markdown");
+
         $window.resize(function () {
             $("#background").width($window.width()).height($window.height());
             $("#container").width($window.width());
@@ -145,17 +170,18 @@ $title = trim($title);
                 }
             }
         });
-        
+
         $("#control .back").click(function () {
             window.location.href = "/";
         });
-        
+
         $("#control .md").click(function () {
-            $("#markdown").html("<pre>" + content.join("\n") + "</pre");
+            $markdown.html("<pre>" + content.join("\n") + "</pre");
+            $discuss.hide();
         });
-        
+
         $("#control .html").click(function () {
-            $("#markdown").
+            $markdown.
                     html(marked(content[0] + "\n" + content[2])).
                     append('<p class="time">' + content[1] + '</p>');
             var img_width = $(".blogarticle p").width();
@@ -168,6 +194,9 @@ $title = trim($title);
                     }
                 }
             });
+            if (content[1].trim()) {
+                $discuss.show();
+            }
         });
 
         $("#control .html").click();
