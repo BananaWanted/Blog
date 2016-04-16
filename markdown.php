@@ -120,8 +120,8 @@ $title = trim($title);
             var content = <?php echo json_encode($elements); ?>;
             var path = '<?php echo $_REQUEST['path']; ?>';
             var disable_disqus_on = [
-                "index.md",
-                "README.md"
+                "/index.md",
+                "/README.md"
             ];
         </script>
     </head>
@@ -203,6 +203,7 @@ $title = trim($title);
                 }
             });
             if (disable_disqus_on.indexOf(path) < 0) {
+                //console.log(path);
                 $discuss.show();
             }
         });
