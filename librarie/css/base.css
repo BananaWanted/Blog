@@ -137,11 +137,15 @@ body
     font-weight: 400;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
+    position: absolute;
+    top: 0;
 }
 
 #container {
+    position: absolute;
     margin: 0;
     padding: 0;
+    top: 0;
 }
 
 a:link, a:visited, a:active, a:hover

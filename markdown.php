@@ -129,6 +129,8 @@ $title = trim($title);
     <script>
         var $window = $(window);
         var $article = $(".blogarticle");
+        var $container = $("#container");
+        
         $window.resize(function () {
             $("#background").width($window.width()).height($window.height());
             $("#container").width($window.width()).height($window.height());
