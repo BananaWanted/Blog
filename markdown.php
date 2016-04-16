@@ -66,10 +66,11 @@ $title = trim($title);
         <script src="/librarie/js/imagesloaded.min.js"></script>
         <style>
             #background {
-                background-position: top center;
+                background-position: bottom left;
                 /*background-repeat: no-repeat;*/
-                background-image: url(/banana.png);
-                background-size: 350px;
+                background-image: url(/banana.jpg);
+                background-size: 700px;
+                background-repeat: no-repeat;
                 position: fixed;
                 z-index: -10;
                 top: 0;
