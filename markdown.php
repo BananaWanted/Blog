@@ -84,7 +84,7 @@ $title = trim($title);
                 right: 0;
             }
             #control div {
-                background-color: rgba(255,255,255,0.95);
+                background-color: rgba(255,255,255,0.5);
                 margin-top: 5px;
                 margin-right: 10px;
                 border: black solid thin;
@@ -160,14 +160,18 @@ $title = trim($title);
     </script>
     <script>
         var $window = $(window);
-        var $article = $(".blogarticle");
         var $container = $("#container");
-        var $discuss = $("#disqus_thread");
+        var $background = $("#background");
+        var $article = $(".blogarticle");
         var $markdown = $("#markdown");
+        var $discuss = $("#disqus_thread");
 
         $window.resize(function () {
-            $("#background").width($window.width()).height($window.height());
-            $("#container").width($window.width());
+            $container.width($window.width());
+            $background.width($window.width()).height($window.height());
+            
+            $background.css("background-size", $background.height() / 1.8);
+            //console.log($background.css("background-size"));
         }).resize();
         marked.setOptions({
             highlight: function (code, lang) {

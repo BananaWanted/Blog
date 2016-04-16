@@ -22,24 +22,20 @@
 {
     text-align:center;
     font-size:1.5em;
-    line-height:2em;
 }
 .blogarticle h2
 {
     font-size:1.3em;
-    line-height:3em;
 
 }
 .blogarticle h3
 {
     font-size:1.2em;
-    line-height:1.5em;
 
 }
 .blogarticle h4
 {
     font-size:1.1em;
-    line-height:1.5em;
 
 }
 .blogarticle ul
@@ -89,7 +85,6 @@
 }
 .blogarticle h1, .blogarticle h2, .blogarticle h3, .blogarticle h4, .blogarticle h5, .blogarticle h6 , .blogarticle .time{
     /*font-family: "Lantinghei SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;*/
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    color: rgb(70, 70, 70);
+    /*font-weight: bold;*/
+    line-height:2em;
 }
