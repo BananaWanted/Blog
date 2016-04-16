@@ -88,11 +88,18 @@ em
     margin: 1em;
     border-left: 0.5em rgb(180, 200, 180) solid;
 }
+.blogarticle .time {
+    margin: 2em 1em auto auto;
+    text-align: right;
+    font-style: italic;
+    font-size: 0.7em;
+    color: rgb(120, 120, 120);
+}
 .blogarticle table, .blogarticle th, .blogarticle td
 {
     border: 1px solid black;
     padding:1em;
 }
-.blogarticle h1, .blogarticle h2, .blogarticle h3, .blogarticle h4, .blogarticle h5, .blogarticle h6 {
+.blogarticle h1, .blogarticle h2, .blogarticle h3, .blogarticle h4, .blogarticle h5, .blogarticle h6 , .blogarticle .time{
     font-family: "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 }

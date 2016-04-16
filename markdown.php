@@ -26,8 +26,9 @@ if (!file_exists($path)) {
 }
 $content = file_get_contents($path);
 //$title = strstr($content, "\n");
-$title = strtok($content, "\n");
-$title = explode("#", $title, 2);
+$elements = explode("\n", $content, 3);
+
+$title = explode("#", $elements[0], 2);
 $title = end($title);
 $title = trim($title);
 ?>
@@ -112,7 +113,7 @@ $title = trim($title);
             }
         </style>
         <script>
-            var content = <?php echo json_encode($content); ?>;
+            var content = <?php echo json_encode($elements); ?>;
         </script>
     </head>
     <body>
@@ -137,7 +138,6 @@ $title = trim($title);
         }).resize();
         marked.setOptions({
             highlight: function (code, lang) {
-                console.log(lang);
                 if (lang === undefined) {
                     return hljs.highlightAuto(code).value;
                 } else {
@@ -145,17 +145,21 @@ $title = trim($title);
                 }
             }
         });
-        $("#control .md").click(function () {
-            $("#markdown").html("<pre>" + content + "</pre");
-        });
+        
         $("#control .back").click(function () {
             window.location.href = "/";
         });
+        
+        $("#control .md").click(function () {
+            $("#markdown").html("<pre>" + content.join("\n") + "</pre");
+        });
+        
         $("#control .html").click(function () {
-            $("#markdown").html(marked(content));
+            $("#markdown").
+                    html(marked(content[0] + "\n" + content[2])).
+                    append('<p class="time">' + content[1] + '</p>');
             var img_width = $(".blogarticle p").width();
             $article.imagesLoaded().progress(function (loded, img) {
-                console.log(img);
                 if (img.isLoaded) {
                     if (img.img.naturalWidth > img_width) {
                         $(img.img).css("width", img_width);
