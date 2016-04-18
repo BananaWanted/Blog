@@ -109,12 +109,6 @@ $title = trim($title);
                 margin-top: 10em;
                 display: none;
             }
-            pre {
-                margin-left: 40px;
-                margin-right: 40px;
-                padding: 20px;
-                background-color: rgb(245, 245, 245);
-            }
         </style>
         <script>
             var content = <?php echo json_encode($elements); ?>;

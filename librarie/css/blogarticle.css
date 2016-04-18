@@ -4,16 +4,16 @@
 {
     border: 1px solid;
     border-color: rgb(200, 200, 200);
-    
+
     border-radius: 3px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     -o-border-radius: 3px;
     -khtml-border-radius: 3px;
-    
+
     background-color: rgba(254, 254, 254, 0.5);
     line-height:1.6em;
-    
+
     margin: 2em auto 2em auto;
     width: 60em;
     padding:2em;
@@ -67,8 +67,15 @@
     border-collapse: collapse;
 
 }
+.blogarticle pre {
+    margin-left: 3em;
+    margin-right: 3em;
+    padding: 2em;
+    background-color: rgb(245, 245, 245);
+    overflow-x: scroll;
+}
 .blogarticle blockquote {
-    margin: 1em 3em 1em 1em;
+    margin: 1em 2em 1em 1em;
     border-left: 0.5em rgb(180, 200, 180) solid;
     background-color: rgba(220, 240, 220, 0.4);
 }

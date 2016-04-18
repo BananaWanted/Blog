@@ -23,4 +23,6 @@ _没什么技术的技术博客_
 ------
 
 ## 友链
-- [范神的博客](http://fanzheng.org)
+- [FanZheng's Blog](http://fanzheng.org)
+- [怡红院落](http://imnerd.org)
+- [Tinko·Secret Base](http://tinko.moe)
