@@ -68,8 +68,9 @@
 
 }
 .blogarticle blockquote {
-    margin: 1em;
+    margin: 1em 3em 1em 1em;
     border-left: 0.5em rgb(180, 200, 180) solid;
+    background-color: rgba(220, 240, 220, 0.4);
 }
 .blogarticle .time {
     margin: 2em 1em auto auto;
