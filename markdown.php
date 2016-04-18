@@ -175,9 +175,17 @@ $title = trim($title);
         }).resize();
         marked.setOptions({
             highlight: function (code, lang) {
+                //console.log("highlight language: " + lang);
+                //console.log(code);
+                //console.log("=============================================================================");
                 if (lang === undefined) {
                     return hljs.highlightAuto(code).value;
-                } else {
+                } else if (lang === "text") {
+                    return code;
+                }
+                else {
+                    //var debug = hljs.highlight(lang, code).value;
+                    //console.log(debug);
                     return hljs.highlight(lang, code).value;
                 }
             }
