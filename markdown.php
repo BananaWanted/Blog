@@ -160,6 +160,10 @@ $title = trim($title);
         var $markdown = $("#markdown");
         var $discuss = $("#disqus_thread");
 
+        function jump(href) {
+            window.location.href = href;
+        }
+
         $window.resize(function () {
             $container.width($window.width());
             $background.width($window.width()).height($window.height());
@@ -186,7 +190,8 @@ $title = trim($title);
         });
 
         $("#control .back").click(function () {
-            window.location.href = "/";
+            jump('/');
+            //window.location.href = "/";
         });
 
         $("#control .md").click(function () {
@@ -198,6 +203,9 @@ $title = trim($title);
             $markdown.
                     html(marked(content[0] + "\n" + content[2])).
                     append('<p class="time">' + content[1] + '</p>');
+            $markdown.find('[id]').addClass('anchor').click(function(e){
+                jump('#' + e.target.id);
+            });
             var img_width = $(".blogarticle p").width();
             $article.imagesLoaded().progress(function (loded, img) {
                 if (img.isLoaded) {

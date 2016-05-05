@@ -95,4 +95,14 @@
     /*font-family: "Lantinghei SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;*/
     /*font-weight: bold;*/
     line-height:2em;
+    display: block;
+    cursor: default;
+    
+    margin-left: -1em;
+    padding-left: 0.5em;
+    
+    border-left: 0.5em transparent solid;
+}
+.blogarticle .anchor:hover {   
+    border-left: 0.5em black solid;
 }
