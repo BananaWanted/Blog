@@ -98,11 +98,13 @@
     display: block;
     cursor: default;
     
-    margin-left: -1em;
-    padding-left: 0.5em;
-    
-    border-left: 0.5em transparent solid;
+    margin-left: -1.2em;
+    padding-left: 1.2em;
 }
-.blogarticle .anchor:hover {   
-    border-left: 0.5em black solid;
+.blogarticle .anchor:hover{
+    cursor: pointer !important;
+    background-image: url("/images/anchor.png");
+    background-position: left center;
+    background-size: 1em;
+    background-repeat: no-repeat;
 }

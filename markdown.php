@@ -203,7 +203,7 @@ $title = trim($title);
             $markdown.
                     html(marked(content[0] + "\n" + content[2])).
                     append('<p class="time">' + content[1] + '</p>');
-            $markdown.find('[id]').addClass('anchor').click(function(e){
+            $markdown.find(':header[id]:not(h1)').addClass('anchor').click(function(e){
                 jump('#' + e.target.id);
             });
             var img_width = $(".blogarticle p").width();
