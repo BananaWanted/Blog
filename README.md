@@ -1,6 +1,6 @@
 # 4 Oranges' Blog
 
-_没什么技术的技术博客_
+_个人博客_
 
 已迁移至独立站点：[blog.fuckcugb.com](http://blog.fuckcugb.com)
 

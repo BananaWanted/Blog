@@ -36,6 +36,7 @@ $title = trim($title);
 <html>
     <head>
         <meta charset="UTF-8">
+        <!--meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' /-->
         <title><?php echo $title; ?> - 4Oranges Blog </title>
 
         <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">

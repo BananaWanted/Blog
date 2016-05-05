@@ -1,7 +1,7 @@
 # 4 Oranges' Blog
 follow me on <a href="https://github.com/4Oranges/Blog">GitHub</a>
 
-_没什么技术的技术博客_
+_个人博客_
 
 ### C++部分
 - [获取C++11线程库的字符串型ID](/articles/001.md)  
