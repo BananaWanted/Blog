@@ -72,7 +72,9 @@
     margin-right: 3em;
     padding: 2em;
     background-color: rgb(245, 245, 245);
-    overflow-x: scroll;
+    overflow: auto;
+  word-wrap: normal;
+  white-space: pre;
 }
 .blogarticle blockquote {
     margin: 1em 2em 1em 1em;
@@ -97,7 +99,7 @@
     line-height:2em;
     display: block;
     cursor: default;
-    
+
     margin-left: -1.2em;
     padding-left: 1.2em;
 }
