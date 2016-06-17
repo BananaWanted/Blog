@@ -24,20 +24,65 @@ if (!file_exists($path)) {
     echo "Error: File Not Found!";
     die;
 }
-$content = file_get_contents($path);
-//$title = strstr($content, "\n");
-$elements = explode("\n", $content, 3);
 
-$title = explode("#", $elements[0], 2);
-$title = end($title);
-$title = trim($title);
+$content = file_get_contents($path);
+$content_len = strlen($content);
+$output = array(
+    "title" => "",
+    "meta" => array(),
+    "content" => ""
+);
+
+$delimiter_beg = "```metadata\n";
+$delimiter_beg_len = strlen($delimiter_beg);
+$delimiter_end = "```\n";
+$delimiter_end_len = strlen($delimiter_end);
+
+$delimiter_beg_pos = stripos($content, $delimiter_beg);
+if ($delimiter_beg_pos !== FALSE) {
+    $delimiter_end_pos = stripos($content, $delimiter_end, $delimiter_beg_pos + $delimiter_beg_len);
+    
+    $temp = explode("\n", substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len));
+    foreach ($temp as $value) {
+        $pos1 = strpos($value, ":");
+        $pos2 = strpos($value, "=");
+        if ($pos1 && $pos2) {
+            $pos = min($pos1, $pos2);
+        } else {
+            $pos = $pos1 or $pos2;
+        }
+        if ($pos === FALSE) {
+            continue;
+        }
+        $output["meta"][trim(substr($value, 0, $pos))] = trim(substr($value, $pos + 1));
+    }
+    $output["content"] = substr_replace($content, "", $delimiter_beg_pos, $delimiter_end_pos - $delimiter_beg_pos + $delimiter_end_len);
+    
+    //$output["title"] = substr($content, 0, $delimiter_beg_pos);
+    //$output["content"] = substr($content, $delimiter_end_pos + $delimiter_end_len);
+} else {
+    $temp = explode("\n", $content, 3);
+    $output["meta"]["date"] = trim($temp[1]);
+    $output["content"] = $temp[0] . "\n" . $temp[2];
+}
+        
+//$elements = explode("\n", $content, 2);
+//
+//$title = explode("#", $elements[0], 2);
+//$title = end($title);
+//$title = trim($title);
+$output["title"] = trim(
+        explode("#", 
+                explode("\n", $content, 2)[0]
+        )[1]
+        );
 ?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <!--meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' /-->
-        <title><?php echo $title; ?> - 4Oranges Blog </title>
+        <title><?php echo $output["title"]; ?> - 4Oranges Blog </title>
 
         <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
@@ -112,7 +157,7 @@ $title = trim($title);
             }
         </style>
         <script>
-            var content = <?php echo json_encode($elements); ?>;
+            var content = <?php echo json_encode($output); ?>;
             var path = '<?php echo $_REQUEST['path']; ?>';
             var disable_disqus_on = [
                 "/index.md",
@@ -196,14 +241,14 @@ $title = trim($title);
         });
 
         $("#control .md").click(function () {
-            $markdown.html("<pre>" + content.join("\n") + "</pre");
+            $markdown.html("<pre>" + content.content + "</pre");
             $discuss.hide();
         });
 
         $("#control .html").click(function () {
             $markdown.
-                    html(marked(content[0] + "\n" + content[2])).
-                    append('<p class="time">' + content[1] + '</p>');
+                    html(marked(content.content)).
+                    append('<p class="time">' + content.meta.date + '</p>');
             $markdown.find(':header[id]:not(h1)').addClass('anchor').click(function(e){
                 jump('#' + e.target.id);
             });
