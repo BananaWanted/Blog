@@ -101,7 +101,7 @@ $overview = scan_articles($scan_path);
 $output;
 $menu = array();
 
-if (!isset($_REQUEST['path']) || empty($_REQUEST['path'])) {
+if (!isset($_REQUEST['path']) || empty($_REQUEST['path']) || $_REQUEST['path'] == "/index.md") {
     $output = get_article($article_path);
 } else {
     $output = $overview[$article_path]["content"];
