@@ -98,9 +98,14 @@ $scan_path = ZPATH_SERVER_ROOT . DIRECTORY_SEPARATOR . "articles";
 $article_path = ZPATH_SERVER_ROOT . $_REQUEST['path'];
 $overview = scan_articles($scan_path);
 
-$output = $overview[$article_path]["content"];
+$output;
 $menu = array();
 
+if (!isset($_REQUEST['path']) || empty($_REQUEST['path'])) {
+    $output = get_article($article_path);
+} else {
+    $output = $overview[$article_path]["content"];
+}
 foreach ($overview as $key => $value) {
     $temp = $value["content"];
     unset($temp["content"]);
