@@ -101,6 +101,7 @@
     cursor: default;
 
     margin-left: -1.2em;
+    margin-right: auto;
     padding-left: 1.2em;
 }
 .blogarticle .anchor:hover{

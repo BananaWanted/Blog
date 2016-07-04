@@ -199,13 +199,14 @@ foreach ($overview as $key => $value) {
                 top: 0;
                 left: 0;
                 width: 30em;
-                height: 100%;
+                height: 80%;
                 background: white;
                 overflow-x: hidden;
                 overflow-y: scroll;
                 border-right: solid black thin;
                 z-index: 0;
-                display: none;
+                border-radius: 20px;
+                /*display: none;*/
             }
             #menu-button {
                 display: block;
@@ -224,13 +225,21 @@ foreach ($overview as $key => $value) {
             }
             .menu-item {
                 display: block;
-                padding: 1em 1em 1em 1em;
+                padding: 0.5em 1em 0.5em 1em;
                 border-collapse: collapse;
                 line-height: 2em;
                 border-top: solid thin rgba(251,152,255,0.4);
             }
             .menu-item:hover {
-                background: mistyrose;
+                background: #fdffc8;
+            }
+            .menu-item-widgets div {
+                float: right;
+                font-size: 0.8em;
+                margin-left: 1em;
+                padding-left: 1em;
+                /*height: 0.8em;*/
+                color: #aaa;
             }
         </style>
         <script>
@@ -325,7 +334,23 @@ foreach ($overview as $key => $value) {
         menu.forEach(function(value) {
             var template = `
             <div class="menu-item" onclick="jump('${value.path}')">
-                ${value.title}
+                <div class="menu-item-title">${value.title}</div>
+                <div class="menu-item-widgets selfclear">
+                    <div class="menu-item-status" ${function(){
+                            if (value.meta.status == "complete") {
+                                return 'style="color: green;"';
+                            } else {
+                                return 'style="color: red;"';
+                            }
+                    }()}>${function(){
+                            if (value.meta.status == "complete") {
+                                return "已完成";
+                            } else {
+                                return value.meta.status;
+                            }
+                    }()}</div>
+                    <div class="menu-item-date">${value.meta.date}</div>
+                </div>
             </div>
             `.trim();
             $menu_content.append(template);
