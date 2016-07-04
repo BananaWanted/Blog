@@ -199,16 +199,22 @@ foreach ($overview as $key => $value) {
                 top: 0;
                 left: 0;
                 width: 30em;
-                height: 80%;
+                height: 70%;
                 background: white;
                 overflow-x: hidden;
                 overflow-y: scroll;
-                border-right: solid black thin;
+                border-right: solid 1px;
+                border-bottom: solid 1px;
+                border-color: #e5e5e5 #dbdbdb #d2d2d2;
+                -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+                -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+                box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
                 z-index: 0;
-                border-radius: 20px;
-                display: none;
+                border-radius: 0 0 20px 0;
+                /*display: none;*/
             }
             #menu-button {
+                cursor: pointer !important;
                 display: block;
                 position: fixed;
                 top: 0;
@@ -224,6 +230,7 @@ foreach ($overview as $key => $value) {
                 margin: 5em 1em auto 1em;
             }
             .menu-item {
+                cursor: pointer !important;
                 display: block;
                 padding: 0.5em 1em 0.5em 1em;
                 border-collapse: collapse;
@@ -257,7 +264,7 @@ foreach ($overview as $key => $value) {
             <div id="background"></div>
             <div id="menu-button"></div>
             <div id="menu">
-                <div id="menu-content"></div>
+                <div id="menu-content" class="selfclear"></div>
             </div>
             <div class="blogarticle">
                 <div id="markdown"></div>
@@ -328,7 +335,7 @@ foreach ($overview as $key => $value) {
             }
         });
         $menu_button.click(function (a) {
-            $menu.toggle(500);
+            $menu.toggle(300);
         });
         
         menu.forEach(function(value) {
