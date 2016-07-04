@@ -18,64 +18,96 @@
 defined('_ZEXEC') or define("_ZEXEC", 1);
 require_once 'base.php';
 
-$path = ZPATH_SERVER_ROOT . $_REQUEST['path'];
-if (!file_exists($path)) {
-    header("HTTP/1.0 404 Not Found");
-    echo "Error: File Not Found!";
-    die;
-}
-
-$content = file_get_contents($path);
-$content_len = strlen($content);
-$output = array(
-    "title" => "",
-    "meta" => array(),
-    "content" => ""
-);
-
-$delimiter_beg = "```metadata\n";
-$delimiter_beg_len = strlen($delimiter_beg);
-$delimiter_end = "```\n";
-$delimiter_end_len = strlen($delimiter_end);
-
-$delimiter_beg_pos = stripos($content, $delimiter_beg);
-if ($delimiter_beg_pos !== FALSE) {
-    $delimiter_end_pos = stripos($content, $delimiter_end, $delimiter_beg_pos + $delimiter_beg_len);
-    
-    $temp = explode("\n", substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len));
-    foreach ($temp as $value) {
-        $pos1 = strpos($value, ":");
-        $pos2 = strpos($value, "=");
-        if ($pos1 && $pos2) {
-            $pos = min($pos1, $pos2);
-        } else {
-            $pos = $pos1 or $pos2;
-        }
-        if ($pos === FALSE) {
-            continue;
-        }
-        $output["meta"][trim(substr($value, 0, $pos))] = trim(substr($value, $pos + 1));
+function get_article($path) {
+    if (!file_exists($path)) {
+        header("HTTP/1.0 404 Not Found");
+        echo "Error: File Not Found!";
+        die;
     }
-    $output["content"] = substr_replace($content, "", $delimiter_beg_pos, $delimiter_end_pos - $delimiter_beg_pos + $delimiter_end_len);
-    
-    //$output["title"] = substr($content, 0, $delimiter_beg_pos);
-    //$output["content"] = substr($content, $delimiter_end_pos + $delimiter_end_len);
-} else {
-    $temp = explode("\n", $content, 3);
-    $output["meta"]["date"] = trim($temp[1]);
-    $output["content"] = $temp[0] . "\n" . $temp[2];
-}
-        
+
+    $content = file_get_contents($path);
+    $content_len = strlen($content);
+    $output = array(
+        "title" => "",
+        "meta" => array(),
+        "content" => ""
+    );
+
+    $delimiter_beg = "```metadata\n";
+    $delimiter_beg_len = strlen($delimiter_beg);
+    $delimiter_end = "```\n";
+    $delimiter_end_len = strlen($delimiter_end);
+
+    $delimiter_beg_pos = stripos($content, $delimiter_beg);
+    if ($delimiter_beg_pos !== FALSE) {
+        $delimiter_end_pos = stripos($content, $delimiter_end, $delimiter_beg_pos + $delimiter_beg_len);
+
+        $temp = explode("\n", substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len));
+        foreach ($temp as $value) {
+            $pos1 = strpos($value, ":");
+            $pos2 = strpos($value, "=");
+            if ($pos1 && $pos2) {
+                $pos = min($pos1, $pos2);
+            } else {
+                $pos = $pos1 or $pos2;
+            }
+            if ($pos === FALSE) {
+                continue;
+            }
+            $output["meta"][trim(substr($value, 0, $pos))] = trim(substr($value, $pos + 1));
+        }
+        $output["content"] = substr_replace($content, "", $delimiter_beg_pos, $delimiter_end_pos - $delimiter_beg_pos + $delimiter_end_len);
+
+        //$output["title"] = substr($content, 0, $delimiter_beg_pos);
+        //$output["content"] = substr($content, $delimiter_end_pos + $delimiter_end_len);
+    } else {
+        $temp = explode("\n", $content, 3);
+        $output["meta"]["date"] = trim($temp[1]);
+        $output["content"] = $temp[0] . "\n" . $temp[2];
+    }
+
 //$elements = explode("\n", $content, 2);
 //
 //$title = explode("#", $elements[0], 2);
 //$title = end($title);
 //$title = trim($title);
-$output["title"] = trim(
-        explode("#", 
-                explode("\n", $content, 2)[0]
-        )[1]
-        );
+    $output["title"] = trim(
+            explode("#", explode("\n", $content, 2)[0]
+            )[1]
+    );
+    return $output;
+}
+
+function scan_articles($path) {
+    $article_dir = new DirectoryIterator($path);
+    $output = array();
+    foreach ($article_dir as $entry) {
+        if ($entry->getExtension() == "md") {
+            $output[$entry->getPathname()] = [
+                "basename" => $entry->getBasename(".md"),
+                "filename" => $entry->getFilename(),
+                "pathname" => $entry->getPathname(),
+                "content" => get_article($entry->getPathname())
+            ];
+        }
+    }
+    return $output;
+}
+
+$scan_path = ZPATH_SERVER_ROOT . DIRECTORY_SEPARATOR . "articles";
+$article_path = ZPATH_SERVER_ROOT . $_REQUEST['path'];
+$overview = scan_articles($scan_path);
+
+$output = $overview[$article_path]["content"];
+$menu = array();
+
+foreach ($overview as $key => $value) {
+    $temp = $value["content"];
+    unset($temp["content"]);
+    $temp["path"] = DIRECTORY_SEPARATOR . "articles" . DIRECTORY_SEPARATOR . $value["filename"];
+    $menu[] = $temp;
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -155,9 +187,54 @@ $output["title"] = trim(
                 margin-top: 10em;
                 display: none;
             }
+
+            #menu {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 30em;
+                height: 100%;
+                background: white;
+                overflow-x: hidden;
+                overflow-y: scroll;
+                border-right: solid black thin;
+                z-index: 0;
+                display: none;
+            }
+            #menu-button {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 3em;
+                height: 3em;
+                background: plum;
+                margin: 1em 0 0 1em;
+                z-index: 1;
+            }
+            #menu-content {
+                display: block;
+                margin: 5em 1em auto 1em;
+            }
+            .menu-item {
+                display: block;
+                height: 3em;
+                padding: 1em 1em 1em 1em;
+                border-collapse: collapse;
+            }
+            .menu-item:hover {
+                background: red;
+            }
+            .menu-item a {
+                height: 1em;
+                line-height: 1em;
+                text-height: 1em;
+            }
         </style>
         <script>
             var content = <?php echo json_encode($output); ?>;
+            var menu = <?php echo json_encode($menu); ?>;
             var path = '<?php echo $_REQUEST['path']; ?>';
             var disable_disqus_on = [
                 "/index.md",
@@ -168,6 +245,10 @@ $output["title"] = trim(
     <body>
         <div id="container">
             <div id="background"></div>
+            <div id="menu-button"></div>
+            <div id="menu">
+                <div id="menu-content"></div>
+            </div>
             <div class="blogarticle">
                 <div id="markdown"></div>
                 <div id="disqus_thread"></div>
@@ -205,6 +286,9 @@ $output["title"] = trim(
         var $article = $(".blogarticle");
         var $markdown = $("#markdown");
         var $discuss = $("#disqus_thread");
+        var $menu = $("#menu");
+        var $menu_button = $("#menu-button");
+        var $menu_content = $("#menu-content");
 
         function jump(href) {
             window.location.href = href;
@@ -213,7 +297,7 @@ $output["title"] = trim(
         $window.resize(function () {
             $container.width($window.width());
             $background.width($window.width()).height($window.height());
-            
+
             $background.css("background-size", $background.height() / 1.8);
             //console.log($background.css("background-size"));
         }).resize();
@@ -226,15 +310,26 @@ $output["title"] = trim(
                     return hljs.highlightAuto(code).value;
                 } else if (lang === "text") {
                     return code;
-                }
-                else {
+                } else {
                     //var debug = hljs.highlight(lang, code).value;
                     //console.log(debug);
                     return hljs.highlight(lang, code).value;
                 }
             }
         });
-
+        $menu_button.click(function (a) {
+            $menu.toggle(500);
+        });
+        
+        menu.forEach(function(value) {
+            var template = `
+            <div class="menu-item">
+                <a href=${value.path}>${value.title}</a>
+            </div>
+            `.trim();
+            $menu_content.append(template);
+        });
+        
         $("#control .back").click(function () {
             jump('/');
             //window.location.href = "/";
@@ -249,7 +344,7 @@ $output["title"] = trim(
             $markdown.
                     html(marked(content.content)).
                     append('<p class="time">' + content.meta.date + '</p>');
-            $markdown.find(':header[id]:not(h1)').addClass('anchor').click(function(e){
+            $markdown.find(':header[id]:not(h1)').addClass('anchor').click(function (e) {
                 jump('#' + e.target.id);
             });
             var img_width = $(".blogarticle p").width();
