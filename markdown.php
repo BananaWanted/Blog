@@ -224,17 +224,13 @@ foreach ($overview as $key => $value) {
             }
             .menu-item {
                 display: block;
-                height: 3em;
                 padding: 1em 1em 1em 1em;
                 border-collapse: collapse;
+                line-height: 2em;
+                border-top: solid thin rgba(251,152,255,0.4);
             }
             .menu-item:hover {
-                background: red;
-            }
-            .menu-item a {
-                height: 1em;
-                line-height: 1em;
-                text-height: 1em;
+                background: mistyrose;
             }
         </style>
         <script>
@@ -328,8 +324,8 @@ foreach ($overview as $key => $value) {
         
         menu.forEach(function(value) {
             var template = `
-            <div class="menu-item">
-                <a href=${value.path}>${value.title}</a>
+            <div class="menu-item" onclick="jump('${value.path}')">
+                ${value.title}
             </div>
             `.trim();
             $menu_content.append(template);
