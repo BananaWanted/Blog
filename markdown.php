@@ -211,7 +211,7 @@ foreach ($overview as $key => $value) {
                 box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
                 z-index: 0;
                 border-radius: 0 0 20px 0;
-                /*display: none;*/
+                display: none;
             }
             #menu-button {
                 cursor: pointer !important;
