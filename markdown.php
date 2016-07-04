@@ -206,7 +206,7 @@ foreach ($overview as $key => $value) {
                 border-right: solid black thin;
                 z-index: 0;
                 border-radius: 20px;
-                /*display: none;*/
+                display: none;
             }
             #menu-button {
                 display: block;
