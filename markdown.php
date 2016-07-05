@@ -340,7 +340,7 @@ foreach ($overview as $key => $value) {
         
         menu.forEach(function(value) {
             var template = `
-            <div class="menu-item" onclick="jump('${value.path}')">
+            <div class="menu-item" href="${value.path}" alt="${value.title}" onclick="jump('${value.path}')">
                 <div class="menu-item-title">${value.title}</div>
                 <div class="menu-item-widgets selfclear">
                     <div class="menu-item-status" ${function(){
