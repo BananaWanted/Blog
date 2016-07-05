@@ -100,7 +100,7 @@ $overview = scan_articles($scan_path);
 $output;
 $menu = array();
 
-if (!isset($_REQUEST['path']) || empty($_REQUEST['path']) || $_REQUEST['path'] == "/index.md") {
+if (strpos($_REQUEST['path'], "/articles/") !== 0) {
     $output = get_article($article_path);
 } else {
     $output = $overview[$article_path]["content"];
@@ -214,7 +214,7 @@ foreach ($overview as $key => $value) {
                 -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
                 box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
                 z-index: 0;
-                border-radius: 0 0 20px 0;
+                border-radius: 0 20px 20px 20px;
                 display: none;
             }
             #menu-button {
@@ -346,7 +346,8 @@ foreach ($overview as $key => $value) {
         
         menu.forEach(function(value) {
             var template = `
-            <div class="menu-item" href="${value.path}" alt="${value.title}" onclick="jump('${value.path}')">
+            <div class="menu-item" onclick="jump('${value.path}')">
+                <a href="${value.path}" style="width:0;height:0;display:none;">${value.title}</a>
                 <div class="menu-item-title">${value.title}</div>
                 <div class="menu-item-widgets selfclear">
                     <div class="menu-item-status" ${function(){
