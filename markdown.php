@@ -57,24 +57,23 @@ function get_article($path) {
             $output["meta"][trim(substr($value, 0, $pos))] = trim(substr($value, $pos + 1));
         }
         $output["content"] = substr_replace($content, "", $delimiter_beg_pos, $delimiter_end_pos - $delimiter_beg_pos + $delimiter_end_len);
-
-        //$output["title"] = substr($content, 0, $delimiter_beg_pos);
-        //$output["content"] = substr($content, $delimiter_end_pos + $delimiter_end_len);
     } else {
         $temp = explode("\n", $content, 3);
         $output["meta"]["date"] = trim($temp[1]);
         $output["content"] = $temp[0] . "\n" . $temp[2];
     }
 
-//$elements = explode("\n", $content, 2);
-//
-//$title = explode("#", $elements[0], 2);
-//$title = end($title);
-//$title = trim($title);
     $output["title"] = trim(
             explode("#", explode("\n", $content, 2)[0]
             )[1]
     );
+    if (isset($output["meta"]["keyword"]) && !empty($output["meta"]["keyword"])) {
+        $keywords = explode(",", $output["meta"]["keyword"]);
+        foreach ($keywords as &$value) {
+            $value = trim($value);
+        }
+        $output["meta"]["keyword"] = $keywords;
+    }
     return $output;
 }
 
@@ -119,7 +118,12 @@ foreach ($overview as $key => $value) {
     <head>
         <meta charset="UTF-8">
         <!--meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' /-->
-        <title><?php echo $output["title"]; ?> - 4Oranges Blog </title>
+        <title><?php echo $output["title"]; ?> - 4Oranges Blog<?php
+            if (isset($output["meta"]["keyword"]) && !empty($output["meta"]["keyword"])) {
+                echo " - ";
+                echo implode(" | ", $output["meta"]["keyword"]);
+            }
+        ?></title>
 
         <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
