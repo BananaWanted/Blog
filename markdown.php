@@ -271,7 +271,9 @@ foreach ($overview as $key => $value) {
                 <div id="menu-content" class="selfclear"></div>
             </div>
             <div class="blogarticle">
-                <div id="markdown"></div>
+                <div id="markdown">
+                    <noscript><pre><?php echo $output["content"]; ?></pre></noscript>
+                </div>
                 <div id="disqus_thread"></div>
             </div>
             <div id="control">
