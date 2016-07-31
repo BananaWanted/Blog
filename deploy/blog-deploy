@@ -1,0 +1,27 @@
+#!/bin/bash
+
+
+REPO=Blog
+BRAN=master
+REPO_DIR="/root"
+DEPLOY_DIR="/var/www/html"
+
+cd $REPO_DIR
+if [ ! -d $REPO ]; then
+	mkdir $REPO
+	git clone https://github.com/4Oranges/$REPO -b $BRAN
+fi
+
+cd $REPO
+
+sudo git pull
+
+rm -rf $DEPLOY_DIR/*
+cp -r * $DEPLOY_DIR/
+rm -rf $DEPLOY_DIR/deploy
+
+#rsync -r --exclude=server_settings * $DEPLOY_DIR/
+
+echo "fix permission..."
+blog-fixpermission
+echo "done"

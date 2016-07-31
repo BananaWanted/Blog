@@ -1,0 +1,35 @@
+#!/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+INSTALL_LIST=(blog-deploy blog-fixpermission)
+INSTALL_PATH_TOOLS="/usr/local/bin"
+INSTALL_PATH_NGINX="/etc"
+STAGE_DELIMITER="====================================="
+
+cd $DIR
+
+echo "installing blog maintenance tools..."
+echo $STAGE_DELIMITER
+for file in ${INSTALL_LIST[*]}; do
+    echo "installing $file to $INSTALL_PATH_TOOLS ..." && sudo install -m 755 -o root $file $INSTALL_PATH_TOOLS/$file && echo "success" || `echo "installation failed, exiting..." && exit`
+done
+echo
+
+echo "installing nginx config files..."
+echo $STAGE_DELIMITER
+NGINX_DIR=( $(find nginx -type d) )
+NGINX_FILES=( $(find nginx -type f) )
+for dir in ${NGINX_DIR[*]}; do
+    echo "create directory $INSTALL_PATH_NGINX/$dir" && sudo install -d $INSTALL_PATH_NGINX/$dir && echo "success" || `echo "installation failed, exiting..." && exit`
+done
+for file in ${NGINX_FILES[*]}; do
+    echo "installing $file to $INSTALL_PATH_NGINX ..." && sudo install -b -S .bak -m 644 -o root $file $INSTALL_PATH_NGINX/$file && echo "success" || `echo "installation failed, exiting..." && exit`
+done
+echo
+
+echo "prepare deploy directory..."
+echo $STAGE_DELIMITER
+sudo install -d /var/www/html/ && echo "sucdess" || `echo "installation failed,     exiting..." && exit`
+echo
+
+echo "installation complete"
