@@ -2,7 +2,9 @@
 
 _个人博客_
 
-已迁移至独立站点：[blog.fuckcugb.com](http://blog.fuckcugb.com)
+访问地址：[blog.fuckcugb.com](http://blog.fuckcugb.com)
+
+[部署指南](https://github.com/4Oranges/Blog/tree/master/deploy)
 
 #### 依赖项：
 
