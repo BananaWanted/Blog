@@ -38,4 +38,4 @@ Thanks to the proxy feature of nginx, I can just work with a normal `.md` to wri
 
 Unlike [Jekyll](https://github.com/jekyll/jekyll), it's not required to add a "metadata section" to the header of the `.md` file. So any standard markdown document would work fine in the site, since an optional **metadata block** can also be used to provide additional information.
 
-Check [this post](/articles/014.md) to learn more about the **metadata block**.
+Check [this post](/articles/014.md#metadata) to learn more about the **metadata block**.
