@@ -1,5 +1,8 @@
 #!/bin/bash
 
+INSTALL_LIST=(blog-deploy blog-fixpermission)
+INSTALL_PATH_TOOLS="/usr/local/bin"
+STAGE_DELIMITER="====================================="
 
 REPO=Blog
 BRAN=master
@@ -18,22 +21,20 @@ fi
 cd $REPO
 
 git pull
+
 cd ZFrame
 git fetch
 git merge origin/master
 cd ..
 
-INSTALL_LIST=(blog-deploy blog-fixpermission)
-INSTALL_PATH_TOOLS="/usr/local/bin"
-STAGE_DELIMITER="====================================="
-
 cd deploy
-echo "update blog maintenance tools..."
 echo $STAGE_DELIMITER
+echo "update blog maintenance tools..."
 for file in ${INSTALL_LIST[*]}; do
     echo "installing $file to $INSTALL_PATH_TOOLS ..." && sudo install -m 755 -o root $file $INSTALL_PATH_TOOLS/$file && echo "success" || `echo "installation failed, exiting..." && exit`
 done
 echo
+cd ..
 
 rm -rf $DEPLOY_DIR/*
 cp -r * $DEPLOY_DIR/
