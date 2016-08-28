@@ -17,11 +17,23 @@ fi
 
 cd $REPO
 
-sudo git pull
+git pull
 cd ZFrame
-sudo git fetch
-sudo git merge origin/master
+git fetch
+git merge origin/master
 cd ..
+
+INSTALL_LIST=(blog-deploy blog-fixpermission)
+INSTALL_PATH_TOOLS="/usr/local/bin"
+STAGE_DELIMITER="====================================="
+
+cd deploy
+echo "update blog maintenance tools..."
+echo $STAGE_DELIMITER
+for file in ${INSTALL_LIST[*]}; do
+    echo "installing $file to $INSTALL_PATH_TOOLS ..." && sudo install -m 755 -o root $file $INSTALL_PATH_TOOLS/$file && echo "success" || `echo "installation failed, exiting..." && exit`
+done
+echo
 
 rm -rf $DEPLOY_DIR/*
 cp -r * $DEPLOY_DIR/
