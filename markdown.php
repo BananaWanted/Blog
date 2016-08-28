@@ -145,13 +145,13 @@ foreach ($overview as $key => $value) {
         <meta name="msapplication-TileImage" content="/mstile-144x144.png">
         <meta name="theme-color" content="#ffffff">
 
-        <script src="ZFrame/librarie/js/jquery.js"></script>
-        <script src="ZFrame/librarie/js/marked.js"></script>
-        <link rel="stylesheet" href="ZFrame/librarie/css/base.css">
-        <link rel="stylesheet" href="ZFrame/librarie/css/blogarticle.css">
-        <script src="ZFrame/librarie/js/highlight.min.js"></script>
-        <link rel="stylesheet" href="ZFrame/librarie/css/highlight.min.css">
-        <script src="ZFrame/librarie/js/imagesloaded.min.js"></script>
+        <script src="ZFrame/library/js/jquery.js"></script>
+        <script src="ZFrame/library/js/marked.js"></script>
+        <link rel="stylesheet" href="ZFrame/library/css/base.css">
+        <link rel="stylesheet" href="ZFrame/library/css/blogarticle.css">
+        <script src="ZFrame/library/js/highlight.min.js"></script>
+        <link rel="stylesheet" href="ZFrame/library/css/highlight.min.css">
+        <script src="ZFrame/library/js/imagesloaded.min.js"></script>
         <style>
             #background {
                 background-position: bottom left;
