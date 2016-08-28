@@ -31,7 +31,7 @@ cd deploy
 echo $STAGE_DELIMITER
 echo "update blog maintenance tools..."
 for file in ${INSTALL_LIST[*]}; do
-    echo "installing $file to $INSTALL_PATH_TOOLS ..." && sudo install -m 755 -o root $file $INSTALL_PATH_TOOLS/$file && echo "success" || `echo "installation failed, exiting..." && exit`
+    echo "installing $file to $INSTALL_PATH_TOOLS ..." && install -m 755 -o root $file $INSTALL_PATH_TOOLS/$file && echo "success" || `echo "installation failed, exiting..." && exit`
 done
 echo
 cd ..
