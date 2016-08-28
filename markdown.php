@@ -16,7 +16,7 @@
  */
 
 defined('_ZEXEC') or define("_ZEXEC", 1);
-require_once 'base.php';
+require_once 'ZFrame/base.php';
 
 function get_article($path) {
     if (!file_exists($path)) {
@@ -93,8 +93,8 @@ function scan_articles($path) {
     return $output;
 }
 
-$scan_path = ZPATH_SERVER_ROOT . DIRECTORY_SEPARATOR . "articles";
-$article_path = ZPATH_SERVER_ROOT . $_REQUEST['path'];
+$scan_path = __DIR__ . DIRECTORY_SEPARATOR . "articles";
+$article_path = __DIR__ . $_REQUEST['path'];
 $overview = scan_articles($scan_path);
 
 $output;
@@ -145,13 +145,13 @@ foreach ($overview as $key => $value) {
         <meta name="msapplication-TileImage" content="/mstile-144x144.png">
         <meta name="theme-color" content="#ffffff">
 
-        <script src="/librarie/js/jquery.js"></script>
-        <script src="/librarie/js/marked.js"></script>
-        <link rel="stylesheet" href="/librarie/css/base.css">
-        <link rel="stylesheet" href="/librarie/css/blogarticle.css">
-        <script src="/librarie/js/highlight.min.js"></script>
-        <link rel="stylesheet" href="/librarie/css/highlight.min.css">
-        <script src="/librarie/js/imagesloaded.min.js"></script>
+        <script src="ZFrame/librarie/js/jquery.js"></script>
+        <script src="ZFrame/librarie/js/marked.js"></script>
+        <link rel="stylesheet" href="ZFrame/librarie/css/base.css">
+        <link rel="stylesheet" href="ZFrame/librarie/css/blogarticle.css">
+        <script src="ZFrame/librarie/js/highlight.min.js"></script>
+        <link rel="stylesheet" href="ZFrame/librarie/css/highlight.min.css">
+        <script src="ZFrame/librarie/js/imagesloaded.min.js"></script>
         <style>
             #background {
                 background-position: bottom left;

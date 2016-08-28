@@ -10,11 +10,14 @@ cd $REPO_DIR
 if [ ! -d $REPO ]; then
 	mkdir $REPO
 	git clone https://github.com/4Oranges/$REPO -b $BRAN
+	git submodule init
+	git submodule update
 fi
 
 cd $REPO
 
 sudo git pull
+sudo git submodule update
 
 rm -rf $DEPLOY_DIR/*
 cp -r * $DEPLOY_DIR/
