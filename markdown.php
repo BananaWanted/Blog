@@ -225,7 +225,8 @@ foreach ($overview as $key => $value) {
                 left: 0;
                 width: 3em;
                 height: 3em;
-                background: plum;
+                background-image: url(/more.png);
+                background-size: 100% 100%;
                 margin: 1em 0 0 1em;
                 z-index: 1;
             }
@@ -342,6 +343,11 @@ foreach ($overview as $key => $value) {
         });
         $menu_button.click(function (a) {
             $menu.toggle(300);
+        });
+        $article.click(function(a) {
+            if ($menu.css("display") != "none") {
+                $menu.hide(300);
+            }
         });
         
         menu.forEach(function(value) {
