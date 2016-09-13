@@ -145,18 +145,18 @@ foreach ($overview as $key => $value) {
         <meta name="msapplication-TileImage" content="/mstile-144x144.png">
         <meta name="theme-color" content="#ffffff">
 
-        <script src="ZFrame/library/js/jquery.js"></script>
-        <script src="ZFrame/library/js/marked.js"></script>
-        <link rel="stylesheet" href="ZFrame/library/css/base.css">
-        <link rel="stylesheet" href="ZFrame/library/css/blogarticle.css">
-        <script src="ZFrame/library/js/highlight.min.js"></script>
-        <link rel="stylesheet" href="ZFrame/library/css/highlight.min.css">
-        <script src="ZFrame/library/js/imagesloaded.min.js"></script>
+        <script src="/ZFrame/library/js/jquery.js"></script>
+        <script src="/ZFrame/library/js/marked.js"></script>
+        <link rel="stylesheet" href="/ZFrame/library/css/base.css">
+        <link rel="stylesheet" href="/ZFrame/library/css/blogarticle.css">
+        <script src="/ZFrame/library/js/highlight.min.js"></script>
+        <link rel="stylesheet" href="/ZFrame/library/css/highlight.min.css">
+        <script src="/ZFrame/library/js/imagesloaded.min.js"></script>
         <style>
             #background {
                 background-position: bottom left;
                 /*background-repeat: no-repeat;*/
-                background-image: url(/banana.jpg);
+                background-image: url(/images/banana.jpg);
                 background-size: 700px;
                 background-repeat: no-repeat;
                 position: fixed;
@@ -225,7 +225,7 @@ foreach ($overview as $key => $value) {
                 left: 0;
                 width: 3em;
                 height: 3em;
-                background-image: url(/more.png);
+                background-image: url(/images/more.png);
                 background-size: 100% 100%;
                 margin: 1em 0 0 1em;
                 z-index: 1;
