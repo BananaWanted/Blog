@@ -349,6 +349,11 @@ foreach ($overview as $key => $value) {
                 $menu.hide(300);
             }
         });
+        $background.click(function(a) {
+            if ($menu.css("display") != "none") {
+                $menu.hide(300);
+            }
+        });
         
         menu.forEach(function(value) {
             var template = `
