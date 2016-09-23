@@ -29,7 +29,7 @@ echo
 
 echo "prepare deploy directory..."
 echo $STAGE_DELIMITER
-sudo install -d /var/www/html/ && echo "sucdess" || `echo "installation failed,     exiting..." && exit`
+sudo install -d /var/www/html/ && echo "success" || `echo "installation failed, exiting..." && exit`
 echo
 
 echo "installation complete"
