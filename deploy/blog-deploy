@@ -34,7 +34,6 @@ for file in ${INSTALL_LIST[*]}; do
     echo "installing $file to $INSTALL_PATH_TOOLS ..." && install -m 755 -o root $file $INSTALL_PATH_TOOLS/$file && echo "success" || `echo "installation failed, exiting..." && exit`
 done
 cd ..
-$next_stage_delimiter
 
 rm -rf $DEPLOY_DIR/*
 cp -r * $DEPLOY_DIR/
