@@ -3,7 +3,7 @@
 INSTALL_LIST=(blog-deploy blog-fixpermission)
 INSTALL_PATH_TOOLS="/usr/local/bin"
 STAGE_DELIMITER="====================================="
-alias next_stage_delimiter = "printf \"${DELIMITER}\n\""
+alias next_stage_delimiter="printf \"${STAGE_DELIMITER}\n\""
 
 REPO=Blog
 BRAN=master
