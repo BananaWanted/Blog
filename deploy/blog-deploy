@@ -3,7 +3,7 @@
 INSTALL_LIST=(blog-deploy blog-fixpermission)
 INSTALL_PATH_TOOLS="/usr/local/bin"
 STAGE_DELIMITER="====================================="
-alias next_stage_delimiter="printf \"${STAGE_DELIMITER}\n\""
+next_stage_delimiter="printf \"${STAGE_DELIMITER}\n\""
 
 REPO=Blog
 BRAN=master
@@ -17,7 +17,7 @@ if [ ! -d $REPO ]; then
 	cd $REPO
 	git submodule init
 	git submodule update
-        next_stage_delimiter
+        $next_stage_delimiter
 fi
 
 cd $REPO
@@ -26,7 +26,7 @@ cd ZFrame
 git fetch
 git merge origin/master
 cd ..
-next_stage_delimiter
+$next_stage_delimiter
 
 cd deploy
 echo "update blog maintenance tools..."
@@ -34,12 +34,12 @@ for file in ${INSTALL_LIST[*]}; do
     echo "installing $file to $INSTALL_PATH_TOOLS ..." && install -m 755 -o root $file $INSTALL_PATH_TOOLS/$file && echo "success" || `echo "installation failed, exiting..." && exit`
 done
 cd ..
-next_stage_delimiter
+$next_stage_delimiter
 
 rm -rf $DEPLOY_DIR/*
 cp -r * $DEPLOY_DIR/
 rm -rf $DEPLOY_DIR/deploy
-next_stage_delimiter
+$next_stage_delimiter
 
 #rsync -r --exclude=server_settings * $DEPLOY_DIR/
 
