@@ -26,9 +26,11 @@
  *          {
  *              ....
  *              result: {
- *                          id: ....,
- *                          email: ....,
- *                          name: ....,
+ *                          id: (int)<user id>,
+ *                          email: (string)<user email>,
+ *                          name: (string)<user name>,
+ *                          verified: (bool)<true if email verified>
+ *                          
  *                      }
  *          }
  * 
@@ -45,10 +47,9 @@
  *              result: null
  *          }
  * 
- * pac/users/<user id>
  * pac/users/<user id>/config
  *      get:
- *          (nothing required)
+ *          (nothing)
  * 
  *      get response(json):
  *          {
@@ -89,7 +90,7 @@
  * 
  * pac/users/<user id>/content
  *      get/post:
- *          (nothing requered)
+ *          (nothing)
  * 
  *      response(json):
  *          {
@@ -105,7 +106,15 @@
  *          <pac content>
  * 
  * 
- * pac/users/<user id>/verification
+ * pac/users/<user id>/validation
+ *      get/post:
+ *          token: <validation token>
+ *      
+ *      response:
+ *          {
+ *              ....
+ *              result: null
+ *          }
  */
 
 defined('_ZEXEC') or define("_ZEXEC", 1);
@@ -10749,11 +10758,7 @@ $default_pac_config = [
 // <editor-fold desc="functions">
 function query_user($email) {
     global $pdo, $rest;
-    $ret = [
-        'status' => $rest->status,
-        'result' => $rest->result,
-        'msg' => $rest->msg
-    ];
+    $ret = $rest->describe();
     $statement = $pdo->prepare(
         'select id, name, token, verified from ' . ZDB_TABLE_PREFIX . 'users ' . 
         'where email = :email' .
@@ -10763,7 +10768,7 @@ function query_user($email) {
     if ($statement->execute() === FALSE) {
         $error = $statement->errorInfo();
         Log::addErrorLog("query user info failed: " . implode("; ", $error));
-        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['status'] = HTTPStatus::Internal_Server_Error ;
         $ret['msg'] = $error[0];
     } else {
         $user = $statement->fetch();
@@ -10771,11 +10776,43 @@ function query_user($email) {
             $ret['result'] = [
                 "id" => $user["id"],
                 "email" => $email,
-                'name' => $user['name']
+                'name' => $user['name'],
+                'verified' => $user['verified'] == "Y" ? TRUE : FALSE
             ];
-            $ret['status'] = HTTPStatus::Status_OK;
+            $ret['status'] = HTTPStatus::OK ;
         } else {
-            $ret['status'] = HTTPStatus::Status_Not_Found;
+            $ret['status'] = HTTPStatus::Not_Found ;
+            $ret['msg'] = "User account not exist";
+        }
+    }
+    return $ret;
+}
+function query_user_id($id) {
+    global $pdo, $rest;
+    $ret = $rest->describe();
+    $statement = $pdo->prepare(
+        'select email, name, token, verified from ' . ZDB_TABLE_PREFIX . 'users ' . 
+        'where id = :id' .
+        ';'
+    );
+    $statement->bindValue(':id', $id, PDO::PARAM_INT);
+    if ($statement->execute() === FALSE) {
+        $error = $statement->errorInfo();
+        Log::addErrorLog("query user id $id failed: " . implode("; ", $error));
+        $ret['status'] = HTTPStatus::Internal_Server_Error ;
+        $ret['msg'] = $error[0];
+    } else {
+        $user = $statement->fetch();
+        if ($user) {
+            $ret['result'] = [
+                "id" => $user["id"],
+                "email" => $email,
+                'name' => $user['name'],
+                'verified' => $user['verified'] == "Y" ? TRUE : FALSE
+            ];
+            $ret['status'] = HTTPStatus::OK ;
+        } else {
+            $ret['status'] = HTTPStatus::Not_Found ;
             $ret['msg'] = "User account not exist";
         }
     }
@@ -10783,11 +10820,7 @@ function query_user($email) {
 }
 function create_user($userinfo) {
     global $pdo, $rest, $default_pac_config;
-    $ret = [
-        'status' => $rest->status,
-        'result' => $rest->result,
-        'msg' => $rest->msg
-    ];
+    $ret = $rest->describe();
     $statement = $pdo->prepare(
         'insert into ' . ZDB_TABLE_PREFIX . 'users set ' .
         'email = :email , ' .
@@ -10795,38 +10828,57 @@ function create_user($userinfo) {
         'token = :token' .
         ';'
     );
+    $token = sha1(uniqid());
     $statement->bindValue(':email', $userinfo['email'], PDO::PARAM_STR);
     $statement->bindValue(':name', $userinfo['name'], PDO::PARAM_STR);
-    $statement->bindValue(':token', sha1(uniqid()), PDO::PARAM_STR);
+    $statement->bindValue(':token', $token, PDO::PARAM_STR);
 
     if ($statement->execute() === FALSE) {
         $error = $statement->errorInfo();
         Log::addErrorLog("create user account failed: " . implode(", ", $error));
-        switch ($error[0]) {
-            case 23000:
-                $ret['status'] = HTTPStatus::Status_Conflict;
-                $ret['msg'] = "User account already exist";
+        switch ($error[1]) {
+            case 1062:
+                $ret['status'] = HTTPStatus::Conflict ;
+                $ret['msg'] = "User account already exists";
                 break;
-            
+            case 1048:
+                $ret['status'] = HTTPStatus::Forbidden ;
+                $ret['msg'] = "Need valid email address";
+                break;
             default:
-                $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+                $ret['status'] = HTTPStatus::Internal_Server_Error ;
                 $ret['msg'] = $error[0];
+                break;
         }
-    } else {        
+    } else {
         $ret = query_user($userinfo['email']);
-        if ($ret['status'] == HTTPStatus::Status_OK) {
-            $ret = update_config($ret['result']['id'], $default_pac_config);
+        if ($ret['status'] == HTTPStatus::OK) {
+            $verify_link = "htts://{$_SERVER['HTTP_HOST']}/api/pac/{$ret["result"]["id"]}/validation?token={$token}";
+            $subject = "vefiry your email address";
+            $message = "please open the link below to verify your email:\n$verify_link";
+
+            $headers   = array();
+            $headers[] = "MIME-Version: 1.0";
+            $headers[] = "Content-type: text/plain; charset=utf-8";
+            $headers[] = "From: 4Oranges Blog <no-reply@daftme.com>";
+            $headers[] = "Reply-To: 4Oranges Blog <no-reply@daftme.com>";
+            $headers[] = "Subject: {$subject}";
+            $headers[] = "X-Mailer: PHP/".phpversion();
+
+            if (mail($userinfo['email'], $subject, $message, NULL, implode("\r\n", $headers))) {
+                $ret = update_config($ret['result']['id'], $default_pac_config);
+            } else {
+                $ret['status'] = HTTPStatus::Internal_Server_Error;
+                $ret['msg'] = "send verification mail failed";
+            }
         }
+        $ret['result'] = NULL;
     }
     return $ret;
 }
 function query_config($id) {
     global $pdo, $rest;
-    $ret = [
-        'status' => $rest->status,
-        'result' => $rest->result,
-        'msg' => $rest->msg
-    ];
+    $ret = $rest->describe();
     $statement = $pdo->prepare(
         'select config from ' . ZDB_TABLE_PREFIX . 'pac_config ' . 
         'where id = :id' .
@@ -10836,14 +10888,14 @@ function query_config($id) {
     if ($statement->execute() === FALSE) {
         $error = $statement->errorInfo();
         Log::addErrorLog("query pac_config for user $id failed: " . implode(", ", $error));
-        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['status'] = HTTPStatus::Internal_Server_Error ;
         $ret['msg'] = $error[0];
     } else {
         if ($config = $statement->fetch()) {
-            $ret['result'] = $config['config'];
-            $ret['status'] = HTTPStatus::Status_OK;
+            $ret['result'] = json_decode($config['config']);
+            $ret['status'] = HTTPStatus::OK ;
         } else {
-            $ret['status'] = HTTPStatus::Status_Not_Found;
+            $ret['status'] = HTTPStatus::Not_Found ;
             $ret['msg'] = "Pac config for user {$id} not exist";
         }
     }
@@ -10851,11 +10903,7 @@ function query_config($id) {
 }
 function update_config($id, $configinfo) {
     global $pdo, $rest;
-    $ret = [
-        'status' => $rest->status,
-        'result' => $rest->result,
-        'msg' => $rest->msg
-    ];
+    $ret = $rest->describe();
     $statement = $pdo->prepare(
         'insert into ' . ZDB_TABLE_PREFIX . 'pac_config ' . 
         '(id, config) ' .
@@ -10869,19 +10917,37 @@ function update_config($id, $configinfo) {
     if ($statement->execute() === FALSE) {
         $error = $statement->errorInfo();
         Log::addErrorLog("update pac config for user $id failed: " . implode(", ", $error));
-        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['status'] = HTTPStatus::Internal_Server_Error ;
         $ret['msg'] = $error[0];
     } else {        
         $pac = new pac();
-        $pac->socks5_servers = $configinfo['socks5_servers'];
-        $pac->socks_servers = $configinfo['socks_servers'];
-        $pac->http_servers = $configinfo['http_servers'];
-        $pac->https_servers = $configinfo['https_servers'];
-        $pac->proxy_host = $configinfo['proxy_host'];
-        $pac->proxy_ip = $configinfo['proxy_ip'];
-        $pac->direct_host = $configinfo['direct_host'];
-        $pac->direct_ip = $configinfo['direct_ip'];
-        $pac->adbp_filters = $configinfo['adbp_filters'];
+        if (is_array($configinfo['socks5_servers'])) {
+            $pac->socks5_servers = $configinfo['socks5_servers'];
+        }
+        if (is_array($configinfo['socks_servers'])) {
+            $pac->socks_servers = $configinfo['socks_servers'];
+        }
+        if (is_array($configinfo['http_servers'])) {
+            $pac->http_servers = $configinfo['http_servers'];
+        }
+        if (is_array($configinfo['https_servers'])) {
+            $pac->https_servers = $configinfo['https_servers'];
+        }
+        if (is_array($configinfo['proxy_host'])) {
+            $pac->proxy_host = $configinfo['proxy_host'];
+        }
+        if (is_array($configinfo['proxy_ip'])) {
+            $pac->proxy_ip = $configinfo['proxy_ip'];
+        }
+        if (is_array($configinfo['direct_host'])) {
+            $pac->direct_host = $configinfo['direct_host'];
+        }
+        if (is_array($configinfo['direct_ip'])) {
+            $pac->direct_ip = $configinfo['direct_ip'];
+        }
+        if (is_array($configinfo['adbp_filters'])) {
+            $pac->adbp_filters = $configinfo['adbp_filters'];
+        }
         //$minify = new JSMinify($pac->get_pac());
         //$ret = update_content($id, $minify->minify());
         $ret = update_content($id, $pac->get_pac());
@@ -10890,11 +10956,7 @@ function update_config($id, $configinfo) {
 }
 function get_content($id) {
     global $pdo, $rest;
-    $ret = [
-        'status' => $rest->status,
-        'result' => $rest->result,
-        'msg' => $rest->msg
-    ];
+    $ret = $rest->describe();
     $statement = $pdo->prepare(
         'select pac from ' . ZDB_TABLE_PREFIX . 'pac_content ' . 
         'where id = :id' .
@@ -10904,14 +10966,14 @@ function get_content($id) {
     if ($statement->execute() === FALSE) {
         $error = $statement->errorInfo();
         Log::addErrorLog("query pac content for user $id failed: " . implode(", ", $error));
-        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['status'] = HTTPStatus::Internal_Server_Error ;
         $ret['msg'] = $error[0];
     } else {
         if ($content = $statement->fetch()) {
             $ret['result'] = $content['pac'];
-            $ret['status'] = HTTPStatus::Status_OK;
+            $ret['status'] = HTTPStatus::OK ;
         } else {
-            $ret['status'] = HTTPStatus::Status_Not_Found;
+            $ret['status'] = HTTPStatus::Not_Found ;
             $ret['msg'] = "Pac content for user {$id} not exist";
         }
     }
@@ -10919,11 +10981,7 @@ function get_content($id) {
 }
 function update_content($id, $pac) {
     global $pdo, $rest;
-    $ret = [
-        'status' => $rest->status,
-        'result' => $rest->result,
-        'msg' => $rest->msg
-    ];
+    $ret = $rest->describe();
     $statement = $pdo->prepare(
         'insert into ' . ZDB_TABLE_PREFIX . 'pac_content ' . 
         '(id, pac) values' .
@@ -10938,16 +10996,42 @@ function update_content($id, $pac) {
         $error = $statement->errorInfo();
         Log::addErrorLog("update pac content for user $id failed: " . implode(", ", $error));
         Log::addErrorLog("query pac content for user $id failed: " . implode(", ", $error));
-        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['status'] = HTTPStatus::Internal_Server_Error ;
     } else {
-        $ret['status'] = HTTPStatus::Status_OK;
+        $ret['status'] = HTTPStatus::OK ;
+    }
+    return $ret;
+}
+function verify_email($id, $token) {
+    global $pdo, $rest;
+    $ret = $rest->describe();
+    // for security, reset all values
+    $ret['status'] = HTTPStatus::Bad_Request;
+    $ret['result'] = NULL;
+    $ret['msg'] = "";
+    
+    $statement = $pdo->prepare(
+        'update ' . ZDB_TABLE_PREFIX . 'users ' . 
+        'set verified = "Y" '.
+        'where id = :id and token = :token and verified = "N" ' .
+        ';'
+    );
+    $statement->bindValue(':id', $id, PDO::PARAM_INT);
+    $statement->bindValue(':token', $token, PDO::PARAM_STR);
+    if ($statement->execute() === FALSE) {
+        $error = $statement->errorInfo();
+        Log::addErrorLog("verify email for $id failed: " . implode("; ", $error));
+    } else {
+        if ($statement->rowCount() == 1) {
+            $ret['status'] = HTTPStatus::OK;
+        }
     }
     return $ret;
 }
 // </editor-fold>
 
 $rest = new RESTfulAPI();
-$rest->status = HTTPStatus::Status_Bad_Request;
+$rest->status = HTTPStatus::Bad_Request ;
 
 @$db = new DatabaseController();
 $pdo = $db->get();
@@ -10981,61 +11065,60 @@ if ($api == "users") {
         Log::addRuntimeLog("api: /api/pac/users");
 
         if ($rest->method == "GET") {
-            $res = query_user($rest->request['email']);
-            $rest->status = $res['status'];
-            $rest->result = $res['result'];
-            $rest->msg = $res['msg'];
+            $rest->assign(query_user($rest->request['email']));
             
         } else if ($rest->method == "POST") {
             $info = json_decode($rest->input, true);
-            $res = create_user($info);
-            $rest->status = $res['status'];
-            $rest->result = $res['result'];
-            $rest->msg = $res['msg'];
+            $rest->assign(create_user($info));
             
         }
     } else {
         $id = $api;
         $api = $rest->next();
+        $userinfo = query_user_id($id);
+        if (!$userinfo['result']['verified'] && $api != "validation") {
+            $rest->status = HTTPStatus::Unauthorized;
+            $rest->msg = "please check your mailbox and verify the email first";
+            goto end;
+        }
         if ($api == "config") {
             Log::addRuntimeLog("api: /api/pac/users/config");
             
             if ($rest->method == "GET") {
-                $res = query_config($id);
-                $rest->status = $res['status'];
-                $rest->result = $res['result'];
-                $rest->msg = $res['msg'];
+                $rest->assign(query_config($id));
                 
             } else if ($rest->method == "POST") {
-                $res = update_config($id, json_decode($rest->input), true);
-                $rest->status = $res['status'];
-                $rest->result = $res['result'];
-                $rest->msg = $res['msg'];
+                $input = json_decode($rest->input, true);
+                $rest->assign(update_config($id, $input));
             }
         } else if ($api == "content") {
-            $res = get_content($id);
-            $rest->status = $res['status'];
-            $rest->result = $res['result'];
-            $rest->msg = $res['msg'];
+            $rest->assign(get_content($id));
             
             $api = $rest->next();
             if ($api === FALSE) {
                 Log::addRuntimeLog("api: /api/pac/users/content");
             } else if ($api === "raw") {
                 Log::addRuntimeLog("api: /api/pac/users/content/raw");
-                if ($rest->status == HTTPStatus::Status_OK) {
+                if ($rest->status == HTTPStatus::OK ) {
                     $pdo->commit();
                     header('Content-Type: application/x-ns-proxy-autoconfig', true);
                     echo $rest->result;
                     exit;
                 }
+            } else {
+                $rest->status = HTTPStatus::Bad_Request ;
+                $rest->result = NULL;
+                $rest->msg = "";
             }
+        } else if ($api == "validation") {
+            Log::addRuntimeLog("api: /api/pac/users/validation");
+            $rest->assign(verify_email($id, $rest->request['token']));
         }
     }
 }
 
 end:
-    if ($rest->status == HTTPStatus::Status_OK) {
+    if ($rest->status == HTTPStatus::OK ) {
         $pdo->commit();
     } else {
         $pdo->rollBack();
