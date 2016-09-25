@@ -10782,7 +10782,7 @@ function query_user($email) {
     return $ret;
 }
 function create_user($userinfo) {
-    global $pdo, $rest;
+    global $pdo, $rest, $default_pac_config;
     $ret = [
         'status' => $rest->status,
         'result' => $rest->result,
