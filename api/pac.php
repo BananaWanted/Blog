@@ -10871,7 +10871,7 @@ function create_user($userinfo) {
             }
             $verify_link .= "://{$_SERVER['HTTP_HOST']}/api/pac/users/{$ret["result"]["id"]}/validation?token={$token}";
             $subject = "vefiry your email address";
-            $message = "access the link below to verify your email:\n$verify_link\n\n\n--4Oranges Blog\nhttps://blog.daftme.com";
+            $message = "Open the following link to verify your email:\n$verify_link\n\n-- 4Oranges Blog\nhttps://blog.daftme.com";
 
             $headers   = array();
             $headers[] = "MIME-Version: 1.0";
@@ -11040,6 +11040,7 @@ function verify_email($id, $token) {
     } else {
         if ($statement->rowCount() == 1) {
             $ret['status'] = HTTPStatus::OK;
+            $ret['msg'] = 'Email address verified';
         }
     }
     return $ret;
