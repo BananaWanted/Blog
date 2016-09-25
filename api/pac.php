@@ -10821,6 +10821,18 @@ function query_user_id($id) {
 function create_user($userinfo) {
     global $pdo, $rest, $default_pac_config;
     $ret = $rest->describe();
+    
+    if  (    
+            mb_strlen($userinfo['name']) < 4 ||
+            preg_match('/[a-zA-Z0-9\-\.]*@[a-zA-Z0-9\-\.]*/', $userinfo['email']) != 1
+        )
+    {
+        $ret['status'] = HTTPStatus::Forbidden;
+        $ret['msg'] = "invalid user input";
+        $ret['result'] = null;
+        return $ret;
+    }
+    
     $statement = $pdo->prepare(
         'insert into ' . ZDB_TABLE_PREFIX . 'users set ' .
         'email = :email , ' .
@@ -10853,9 +10865,13 @@ function create_user($userinfo) {
     } else {
         $ret = query_user($userinfo['email']);
         if ($ret['status'] == HTTPStatus::OK) {
-            $verify_link = "https://{$_SERVER['HTTP_HOST']}/api/pac/users/{$ret["result"]["id"]}/validation?token={$token}";
+            $verify_link = "http";
+            if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
+                $verify_link .= "s";
+            }
+            $verify_link .= "://{$_SERVER['HTTP_HOST']}/api/pac/users/{$ret["result"]["id"]}/validation?token={$token}";
             $subject = "vefiry your email address";
-            $message = "please open the link below to verify your email:\n$verify_link";
+            $message = "access the link below to verify your email:\n$verify_link\n\n\n--4Oranges Blog\nhttps://blog.daftme.com";
 
             $headers   = array();
             $headers[] = "MIME-Version: 1.0";
