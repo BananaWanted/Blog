@@ -10802,8 +10802,16 @@ function create_user($userinfo) {
     if ($statement->execute() === FALSE) {
         $error = $statement->errorInfo();
         Log::addErrorLog("create user account failed: " . implode(", ", $error));
-        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
-        $ret['msg'] = $error[0];
+        switch ($error[0]) {
+            case 23000:
+                $ret['status'] = HTTPStatus::Status_Conflict;
+                $ret['msg'] = "User account already exist";
+                break;
+            
+            default:
+                $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+                $ret['msg'] = $error[0];
+        }
     } else {        
         $ret = query_user($userinfo['email']);
         if ($ret['status' == HTTPStatus::Status_OK]) {
