@@ -11013,7 +11013,7 @@ if ($api == "users") {
                 $rest->msg = $res['msg'];
             }
         } else if ($api == "content") {
-            $res = get_content();
+            $res = get_content($id);
             $rest->status = $res['status'];
             $rest->result = $res['result'];
             $rest->msg = $res['msg'];
