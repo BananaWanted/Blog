@@ -10853,7 +10853,7 @@ function create_user($userinfo) {
     } else {
         $ret = query_user($userinfo['email']);
         if ($ret['status'] == HTTPStatus::OK) {
-            $verify_link = "htts://{$_SERVER['HTTP_HOST']}/api/pac/{$ret["result"]["id"]}/validation?token={$token}";
+            $verify_link = "https://{$_SERVER['HTTP_HOST']}/api/pac/users/{$ret["result"]["id"]}/validation?token={$token}";
             $subject = "vefiry your email address";
             $message = "please open the link below to verify your email:\n$verify_link";
 
