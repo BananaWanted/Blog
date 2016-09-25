@@ -46,7 +46,7 @@
  *          }
  * 
  * pac/users/<user id>
- * pac/users/<user id>/pacconfig
+ * pac/users/<user id>/config
  *      get:
  *          (nothing required)
  * 
@@ -10828,14 +10828,14 @@ function query_config($id) {
         'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
-        'select config from ' . ZDB_TABLE_PREFIX . 'pacconfig ' . 
+        'select config from ' . ZDB_TABLE_PREFIX . 'pac_config ' . 
         'where id = :id' .
         ';'
     );
     $statement->bindValue(':id', $id, PDO::PARAM_INT);
     if ($statement->execute() === FALSE) {
         $error = $statement->errorInfo();
-        Log::addErrorLog("query pacconfig for user $id failed: " . implode(", ", $error));
+        Log::addErrorLog("query pac_config for user $id failed: " . implode(", ", $error));
         $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
         $ret['msg'] = $error[0];
     } else {
@@ -10857,7 +10857,7 @@ function update_config($id, $configinfo) {
         'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
-        'insert into ' . ZDB_TABLE_PREFIX . 'pacconfig ' . 
+        'insert into ' . ZDB_TABLE_PREFIX . 'pac_config ' . 
         '(id, config) ' .
         'values (:id, :config) ' .
         'ON DUPLICATE KEY UPDATE ' .
@@ -10896,7 +10896,7 @@ function get_content($id) {
         'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
-        'select pac from ' . ZDB_TABLE_PREFIX . 'content ' . 
+        'select pac from ' . ZDB_TABLE_PREFIX . 'pac_content ' . 
         'where id = :id' .
         ';'
     );
@@ -10925,7 +10925,7 @@ function update_content($id, $pac) {
         'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
-        'insert into ' . ZDB_TABLE_PREFIX . 'content ' . 
+        'insert into ' . ZDB_TABLE_PREFIX . 'pac_content ' . 
         '(id, pac) values' .
         '(:id, :pac) ' .
         'ON DUPLICATE KEY UPDATE ' .
@@ -10960,13 +10960,13 @@ $db->exec(
         'verified ENUM("Y", "N") not null default "N"' .
         ');');
 $db->exec(
-        'create table if not exists ' . ZDB_TABLE_PREFIX . 'pacconfig (' .
+        'create table if not exists ' . ZDB_TABLE_PREFIX . 'pac_config (' .
         'id int(10) primary key,' .
         'config longblob' .
         //'foreign key (id) references users (id)' .
         ');');
 $db->exec(
-        'create table if not exists ' . ZDB_TABLE_PREFIX . 'content (' .
+        'create table if not exists ' . ZDB_TABLE_PREFIX . 'pac_content (' .
         'id int(10) primary key,' .
         'pac longblob' .
         //'foreign key (id) references users (id)' .
@@ -10997,8 +10997,8 @@ if ($api == "users") {
     } else {
         $id = $api;
         $api = $rest->next();
-        if ($api == "pacconfig") {
-            Log::addRuntimeLog("api: /api/pac/users/pacconfig");
+        if ($api == "config") {
+            Log::addRuntimeLog("api: /api/pac/users/config");
             
             if ($rest->method == "GET") {
                 $res = query_config($id);
