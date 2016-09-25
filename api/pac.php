@@ -10814,7 +10814,7 @@ function create_user($userinfo) {
         }
     } else {        
         $ret = query_user($userinfo['email']);
-        if ($ret['status' == HTTPStatus::Status_OK]) {
+        if ($ret['status'] == HTTPStatus::Status_OK) {
             $ret = update_config($ret['result']['id'], $default_pac_config);
         }
     }
