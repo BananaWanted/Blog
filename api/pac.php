@@ -10865,7 +10865,7 @@ function create_user($userinfo) {
             $headers[] = "Subject: {$subject}";
             $headers[] = "X-Mailer: PHP/".phpversion();
 
-            if (mail($userinfo['email'], $subject, $message, NULL, implode("\r\n", $headers))) {
+            if (mail($userinfo['email'], $subject, $message, implode("\r\n", $headers))) {
                 $ret = update_config($ret['result']['id'], $default_pac_config);
             } else {
                 $ret['status'] = HTTPStatus::Internal_Server_Error;
