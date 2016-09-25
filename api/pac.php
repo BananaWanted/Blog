@@ -105,7 +105,7 @@
  *          <pac content>
  * 
  * 
- * pac/users/<user id>/verify
+ * pac/users/<user id>/verification
  */
 
 defined('_ZEXEC') or define("_ZEXEC", 1);
@@ -10751,7 +10751,8 @@ function query_user($email) {
     global $pdo, $rest;
     $ret = [
         'status' => $rest->status,
-        'result' => $rest->result
+        'result' => $rest->result,
+        'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
         'select id, name, token, verified from ' . ZDB_TABLE_PREFIX . 'users ' . 
@@ -10760,7 +10761,10 @@ function query_user($email) {
     );
     $statement->bindValue(':email', $email, PDO::PARAM_STR);
     if ($statement->execute() === FALSE) {
-        Log::addErrorLog("query user info failed: " . implode(", ", $statement->errorInfo()));
+        $error = $statement->errorInfo();
+        Log::addErrorLog("query user info failed: " . implode("; ", $error));
+        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['msg'] = $error[0];
     } else {
         $user = $statement->fetch();
         if ($user) {
@@ -10771,7 +10775,8 @@ function query_user($email) {
             ];
             $ret['status'] = HTTPStatus::Status_OK;
         } else {
-            Log::addRuntimeLog("User not find");
+            $ret['status'] = HTTPStatus::Status_Not_Found;
+            $ret['msg'] = "User account not exist";
         }
     }
     return $ret;
@@ -10780,7 +10785,8 @@ function create_user($userinfo) {
     global $pdo, $rest;
     $ret = [
         'status' => $rest->status,
-        'result' => $rest->result
+        'result' => $rest->result,
+        'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
         'insert into ' . ZDB_TABLE_PREFIX . 'users set ' .
@@ -10794,9 +10800,15 @@ function create_user($userinfo) {
     $statement->bindValue(':token', sha1(uniqid()), PDO::PARAM_STR);
 
     if ($statement->execute() === FALSE) {
-        Log::addErrorLog("create user account failed: " . implode(", ", $statement->errorInfo()));
-    } else {
-        $ret['status'] = HTTPStatus::Status_OK;
+        $error = $statement->errorInfo();
+        Log::addErrorLog("create user account failed: " . implode(", ", $error));
+        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['msg'] = $error[0];
+    } else {        
+        $ret = query_user($userinfo['email']);
+        if ($ret['status' == HTTPStatus::Status_OK]) {
+            $ret = update_config($ret['result']['id'], $default_pac_config);
+        }
     }
     return $ret;
 }
@@ -10804,7 +10816,8 @@ function query_config($id) {
     global $pdo, $rest;
     $ret = [
         'status' => $rest->status,
-        'result' => $rest->result
+        'result' => $rest->result,
+        'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
         'select config from ' . ZDB_TABLE_PREFIX . 'pacconfig ' . 
@@ -10813,11 +10826,17 @@ function query_config($id) {
     );
     $statement->bindValue(':id', $id, PDO::PARAM_INT);
     if ($statement->execute() === FALSE) {
-        Log::addErrorLog("query pacconfig for user $id failed: " . implode(", ", $statement->errorInfo()));
+        $error = $statement->errorInfo();
+        Log::addErrorLog("query pacconfig for user $id failed: " . implode(", ", $error));
+        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['msg'] = $error[0];
     } else {
         if ($config = $statement->fetch()) {
             $ret['result'] = $config['config'];
             $ret['status'] = HTTPStatus::Status_OK;
+        } else {
+            $ret['status'] = HTTPStatus::Status_Not_Found;
+            $ret['msg'] = "Pac config for user {$id} not exist";
         }
     }
     return $ret;
@@ -10826,7 +10845,8 @@ function update_config($id, $configinfo) {
     global $pdo, $rest;
     $ret = [
         'status' => $rest->status,
-        'result' => $rest->result
+        'result' => $rest->result,
+        'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
         'insert into ' . ZDB_TABLE_PREFIX . 'pacconfig ' . 
@@ -10839,10 +10859,11 @@ function update_config($id, $configinfo) {
     $statement->bindValue(':id', $id, PDO::PARAM_INT);
     $statement->bindValue(':config', json_encode($configinfo), PDO::PARAM_LOB);
     if ($statement->execute() === FALSE) {
-        Log::addErrorLog("update pac config for user $id failed: " . implode(", ", $statement->errorInfo()));
-    } else {
-        $ret['status'] = HTTPStatus::Status_OK;
-        
+        $error = $statement->errorInfo();
+        Log::addErrorLog("update pac config for user $id failed: " . implode(", ", $error));
+        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['msg'] = $error[0];
+    } else {        
         $pac = new pac();
         $pac->socks5_servers = $configinfo['socks5_servers'];
         $pac->socks_servers = $configinfo['socks_servers'];
@@ -10853,8 +10874,9 @@ function update_config($id, $configinfo) {
         $pac->direct_host = $configinfo['direct_host'];
         $pac->direct_ip = $configinfo['direct_ip'];
         $pac->adbp_filters = $configinfo['adbp_filters'];
-        $minify = new JSMinify($pac->get_pac());
-        update_content($id, $minify->minify());
+        //$minify = new JSMinify($pac->get_pac());
+        //$ret = update_content($id, $minify->minify());
+        $ret = update_content($id, $pac->get_pac());
     }
     return $ret;
 }
@@ -10862,7 +10884,8 @@ function get_content($id) {
     global $pdo, $rest;
     $ret = [
         'status' => $rest->status,
-        'result' => $rest->result
+        'result' => $rest->result,
+        'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
         'select pac from ' . ZDB_TABLE_PREFIX . 'content ' . 
@@ -10871,11 +10894,17 @@ function get_content($id) {
     );
     $statement->bindValue(':id', $id, PDO::PARAM_INT);
     if ($statement->execute() === FALSE) {
-        Log::addErrorLog("query pac content for user $id failed: " . implode(", ", $statement->errorInfo()));
+        $error = $statement->errorInfo();
+        Log::addErrorLog("query pac content for user $id failed: " . implode(", ", $error));
+        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
+        $ret['msg'] = $error[0];
     } else {
         if ($content = $statement->fetch()) {
             $ret['result'] = $content['pac'];
             $ret['status'] = HTTPStatus::Status_OK;
+        } else {
+            $ret['status'] = HTTPStatus::Status_Not_Found;
+            $ret['msg'] = "Pac content for user {$id} not exist";
         }
     }
     return $ret;
@@ -10884,7 +10913,8 @@ function update_content($id, $pac) {
     global $pdo, $rest;
     $ret = [
         'status' => $rest->status,
-        'result' => $rest->result
+        'result' => $rest->result,
+        'msg' => $rest->msg
     ];
     $statement = $pdo->prepare(
         'insert into ' . ZDB_TABLE_PREFIX . 'content ' . 
@@ -10897,7 +10927,10 @@ function update_content($id, $pac) {
     $statement->bindValue(':id', $id, PDO::PARAM_INT);
     $statement->bindValue(':pac', $pac, PDO::PARAM_LOB);
     if ($statement->execute() === FALSE) {
-        Log::addErrorLog("update pac content for user $id failed: " . implode(", ", $statement->errorInfo()));
+        $error = $statement->errorInfo();
+        Log::addErrorLog("update pac content for user $id failed: " . implode(", ", $error));
+        Log::addErrorLog("query pac content for user $id failed: " . implode(", ", $error));
+        $ret['status'] = HTTPStatus::Status_Internal_Server_Error;
     } else {
         $ret['status'] = HTTPStatus::Status_OK;
     }
@@ -10906,7 +10939,7 @@ function update_content($id, $pac) {
 // </editor-fold>
 
 $rest = new RESTfulAPI();
-$rest->status = HTTPStatus::Status_Not_Found;
+$rest->status = HTTPStatus::Status_Bad_Request;
 
 @$db = new DatabaseController();
 $pdo = $db->get();
@@ -10931,8 +10964,8 @@ $db->exec(
         //'foreign key (id) references users (id)' .
         ');');
 
+$pdo->beginTransaction();
 $api = $rest->next();
-
 
 if ($api == "users") {
     $api = $rest->next();
@@ -10943,17 +10976,15 @@ if ($api == "users") {
             $res = query_user($rest->request['email']);
             $rest->status = $res['status'];
             $rest->result = $res['result'];
+            $rest->msg = $res['msg'];
             
         } else if ($rest->method == "POST") {
             $info = json_decode($rest->input, true);
             $res = create_user($info);
             $rest->status = $res['status'];
             $rest->result = $res['result'];
+            $rest->msg = $res['msg'];
             
-            if ($res['status'] == HTTPStatus::Status_OK) {
-                $res = query_user($info['email']);
-                $res = update_config($res['result']['id'], $default_pac_config);
-            }
         }
     } else {
         $id = $api;
@@ -10965,32 +10996,40 @@ if ($api == "users") {
                 $res = query_config($id);
                 $rest->status = $res['status'];
                 $rest->result = $res['result'];
+                $rest->msg = $res['msg'];
                 
             } else if ($rest->method == "POST") {
                 $res = update_config($id, json_decode($rest->input), true);
                 $rest->status = $res['status'];
                 $rest->result = $res['result'];
+                $rest->msg = $res['msg'];
             }
         } else if ($api == "content") {
             $res = get_content();
             $rest->status = $res['status'];
             $rest->result = $res['result'];
+            $rest->msg = $res['msg'];
             
             $api = $rest->next();
             if ($api === FALSE) {
                 Log::addRuntimeLog("api: /api/pac/users/content");
             } else if ($api === "raw") {
                 Log::addRuntimeLog("api: /api/pac/users/content/raw");
-                header('Content-Type: application/x-ns-proxy-autoconfig', true);
-                echo $rest->result;
-                exit;
+                if ($rest->status == HTTPStatus::Status_OK) {
+                    $pdo->commit();
+                    header('Content-Type: application/x-ns-proxy-autoconfig', true);
+                    echo $rest->result;
+                    exit;
+                }
             }
-            
-        } else {
-            
         }
     }
 }
 
 end:
+    if ($rest->status == HTTPStatus::Status_OK) {
+        $pdo->commit();
+    } else {
+        $pdo->rollBack();
+    }
     $rest->generate_output();
