@@ -10791,7 +10791,7 @@ function query_user_id($id) {
     global $pdo, $rest;
     $ret = $rest->describe();
     $statement = $pdo->prepare(
-        'select email, name, token, verified from ' . ZDB_TABLE_PREFIX . 'users ' . 
+        'select id, email, name, token, verified from ' . ZDB_TABLE_PREFIX . 'users ' . 
         'where id = :id' .
         ';'
     );
@@ -10804,9 +10804,10 @@ function query_user_id($id) {
     } else {
         $user = $statement->fetch();
         if ($user) {
+            //Log::addRuntimeLog("query user id result: " . var_export($user, true));
             $ret['result'] = [
                 "id" => $user["id"],
-                "email" => $email,
+                "email" => $user['email'],
                 'name' => $user['name'],
                 'verified' => $user['verified'] == "Y" ? TRUE : FALSE
             ];
@@ -10880,22 +10881,28 @@ function create_user($userinfo) {
                 $verify_link .= "s";
             }
             $verify_link .= "://{$_SERVER['HTTP_HOST']}/api/pac/users/{$ret["result"]["id"]}/validation?token={$token}";
-            $subject = "vefiry your email address";
+            $subject = "Vefiry your email address";
             $message = "Open the following link to verify your email:\n$verify_link\n\n-- 4Oranges Blog\nhttps://blog.daftme.com";
 
-            $headers   = array();
-            $headers[] = "MIME-Version: 1.0";
-            $headers[] = "Content-type: text/plain; charset=utf-8";
-            $headers[] = "From: 4Oranges Blog <no-reply@daftme.com>";
-            $headers[] = "Reply-To: 4Oranges Blog <no-reply@daftme.com>";
-            //$headers[] = "Subject: {$subject}";
-            $headers[] = "X-Mailer: PHP/".phpversion();
+//            $headers   = array();
+//            $headers[] = "MIME-Version: 1.0";
+//            $headers[] = "Content-type: text/plain; charset=utf-8";
+//            $headers[] = "From: 4Oranges Blog <no-reply@daftme.com>";
+//            $headers[] = "Reply-To: 4Oranges Blog <no-reply@daftme.com>";
+//            //$headers[] = "Subject: {$subject}";
+//            $headers[] = "X-Mailer: PHP/".phpversion();
+            
+            $mailer = get_mailer();
+            $mailer->addAddress($userinfo['email'], $userinfo['name']);
+            $mailer->Subject = $subject;
+            $mailer->Body = $message;
 
-            if (mail($userinfo['email'], $subject, $message, implode("\r\n", $headers))) {
+            if ($mailer->send()) {
+                $ret['status'] = HTTPStatus::OK;
                 $ret = update_config($ret['result']['id'], $default_pac_config);
             } else {
                 $ret['status'] = HTTPStatus::Internal_Server_Error;
-                $ret['msg'] = "send verification mail failed";
+                $ret['msg'] = "send verification mail failed: {$mailer->ErrorInfo}";
             }
         }
         $ret['result'] = NULL;
