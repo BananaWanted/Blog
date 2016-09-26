@@ -10761,7 +10761,7 @@ function query_user($email) {
     $ret = $rest->describe();
     $statement = $pdo->prepare(
         'select id, name, token, verified from ' . ZDB_TABLE_PREFIX . 'users ' . 
-        'where email = :email' .
+        'where lower(email) = lower(:email)' .
         ';'
     );
     $statement->bindValue(':email', $email, PDO::PARAM_STR);
@@ -10821,6 +10821,16 @@ function query_user_id($id) {
 function create_user($userinfo) {
     global $pdo, $rest, $default_pac_config;
     $ret = $rest->describe();
+    $ret = query_user($userinfo['email']);
+    if ($ret['status'] != HTTPStatus::Not_Found) {
+        $ret['result'] = NULL;
+        $ret['msg'] = NULL;
+        if (($ret['status'] == HTTPStatus::OK)) {
+            $ret['status'] = HTTPStatus::Conflict ;
+            $ret['msg'] = "User account already exists";
+        }
+        return $ret;
+    }
     
     if  (    
             mb_strlen($userinfo['name']) < 4 ||
