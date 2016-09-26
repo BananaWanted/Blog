@@ -10888,7 +10888,7 @@ function create_user($userinfo) {
             $headers[] = "Content-type: text/plain; charset=utf-8";
             $headers[] = "From: 4Oranges Blog <no-reply@daftme.com>";
             $headers[] = "Reply-To: 4Oranges Blog <no-reply@daftme.com>";
-            $headers[] = "Subject: {$subject}";
+            //$headers[] = "Subject: {$subject}";
             $headers[] = "X-Mailer: PHP/".phpversion();
 
             if (mail($userinfo['email'], $subject, $message, implode("\r\n", $headers))) {
