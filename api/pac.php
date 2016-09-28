@@ -10892,6 +10892,8 @@ function create_user($userinfo) {
 //            //$headers[] = "Subject: {$subject}";
 //            $headers[] = "X-Mailer: PHP/".phpversion();
             
+            // Using PHPMailer to send mail.
+            // the get_mailer() function should be in startup.php
             $mailer = get_mailer();
             $mailer->addAddress($userinfo['email'], $userinfo['name']);
             $mailer->Subject = $subject;
