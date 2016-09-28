@@ -11126,6 +11126,8 @@ if ($api == "users") {
             } else if ($rest->method == "POST") {
                 $input = json_decode($rest->input, true);
                 $rest->assign(update_config($id, $input));
+            } else if ($rest->method == "DELETE") {
+                $rest->assign(update_config($id, $default_pac_config));
             }
         } else if ($api == "content") {
             $rest->assign(get_content($id));
