@@ -4894,7 +4894,7 @@ $default_pac_config = [
     ],
     'proxy_host' => [
         // <editor-fold defaultstate="collapsed" desc="proxy_host">
-        "my-soft-site.top",
+        "twimg.com",
         "nicovideo.jp",
         "d19hkjflplfhx2.cloudfront.net",
         "laptopscreen.com",
@@ -11145,6 +11145,8 @@ if ($api == "users") {
                     header('Content-Type: application/x-ns-proxy-autoconfig', true);
                     echo $rest->result;
                     exit;
+                } else {
+                    http_response_code(HTTPStatus::status_code_of($rest->status));
                 }
             } else {
                 $rest->status = HTTPStatus::Bad_Request ;
