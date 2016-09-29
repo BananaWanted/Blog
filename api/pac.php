@@ -125,6 +125,9 @@ $default_pac_config = [
     'direct_host' => [
         "localhost",
         ".local",
+        "daftme.com",
+        "fuckcugb.com",
+        "12306.cn",
         "sinajs.cn",
         "hdslb.com",
         "csdn.net",
