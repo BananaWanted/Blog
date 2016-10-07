@@ -117,7 +117,7 @@
  *          }
  */
 
-defined('_ZEXEC') or define("_ZEXEC", 1);
+defined('ZEXEC') or define("ZEXEC", 1);
 require_once '../ZFrame/base.php';
 
 // <editor-fold desc="default pac config">
