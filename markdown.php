@@ -145,13 +145,18 @@ foreach ($overview as $key => $value) {
         <meta name="msapplication-TileImage" content="/mstile-144x144.png">
         <meta name="theme-color" content="#ffffff">
 
-        <script src="/ZFrame/library/js/jquery.js"></script>
-        <script src="/ZFrame/library/js/marked.js"></script>
-        <script src="/ZFrame/library/js/FileSaver.min.js"></script>
-        <script src="/ZFrame/library/js/highlight.min.js"></script>
+        <script src="/ZFrame/library/js/ZFrame.js"></script>
+        <script>
+            ZFrame.using("jquery");
+            ZFrame.using("marked");
+            ZFrame.using("FileSaver");
+            ZFrame.using("highlight");
+            ZFrame.using("vue");
+            ZFrame.onload(()=>{
+                ZFrame.using("imagesloaded");
+            });
+        </script>
         <link rel="stylesheet" href="/ZFrame/library/css/highlight.min.css">
-        <script src="/ZFrame/library/js/imagesloaded.min.js"></script>
-        
         <link rel="stylesheet" href="/ZFrame/library/css/base.css">
         <link rel="stylesheet" href="/ZFrame/library/css/blogarticle.css">
         <style>
@@ -287,7 +292,6 @@ foreach ($overview as $key => $value) {
         </div>
     </body>
     <script>
-
         var disqus_config = function () {
             this.page.url = 'http://blog.fuckcugb.com' + path;
             this.page.identifier = path;
@@ -306,115 +310,120 @@ foreach ($overview as $key => $value) {
         }
     </script>
     <script>
-        var $window = $(window);
-        var $container = $("#container");
-        var $background = $("#background");
-        var $article = $(".blogarticle");
-        var $markdown = $("#markdown");
-        var $discuss = $("#disqus_thread");
-        var $menu = $("#menu");
-        var $menu_button = $("#menu-button");
-        var $menu_content = $("#menu-content");
-
         function jump(href) {
             window.location.href = href;
         }
-
-        $window.resize(function () {
-            $container.width($window.width());
-            $background.width($window.width()).height($window.height());
-
-            $background.css("background-size", $background.height() / 1.8);
-            //console.log($background.css("background-size"));
-        }).resize();
-        marked.setOptions({
-            highlight: function (code, lang) {
-                //console.log("highlight language: " + lang);
-                //console.log(code);
-                //console.log("=============================================================================");
-                if (lang === undefined) {
-                    return hljs.highlightAuto(code).value;
-                } else if (lang === "text") {
-                    return code;
-                } else {
-                    //var debug = hljs.highlight(lang, code).value;
-                    //console.log(debug);
-                    return hljs.highlight(lang, code).value;
-                }
-            }
-        });
-        $menu_button.click(function (a) {
-            $menu.toggle(300);
-        });
-        $article.click(function(a) {
-            if ($menu.css("display") != "none") {
-                $menu.hide(300);
-            }
-        });
-        $background.click(function(a) {
-            if ($menu.css("display") != "none") {
-                $menu.hide(300);
-            }
-        });
         
-        menu.forEach(function(value) {
-            var template = `
-            <div class="menu-item" onclick="jump('${value.path}')">
-                <a href="${value.path}" style="width:0;height:0;display:none;">${value.title}</a>
-                <div class="menu-item-title">${value.title}</div>
-                <div class="menu-item-widgets selfclear">
-                    <div class="menu-item-status" ${function(){
-                            if (value.meta.status == "complete") {
-                                return 'style="color: green;"';
-                            } else {
-                                return 'style="color: red;"';
-                            }
-                    }()}>${function(){
-                            if (value.meta.status == "complete") {
-                                return "已完成";
-                            } else {
-                                return value.meta.status;
-                            }
-                    }()}</div>
-                    <div class="menu-item-date">${value.meta.date}</div>
-                </div>
-            </div>
-            `.trim();
-            $menu_content.append(template);
-        });
+        let $vm;
         
-        $("#control .back").click(function () {
-            jump('/');
-            //window.location.href = "/";
-        });
+        ZFrame.onload(()=>
+        {
+            var $window = $(window);
+            var $container = $("#container");
+            var $background = $("#background");
+            var $article = $(".blogarticle");
+            var $markdown = $("#markdown");
+            var $discuss = $("#disqus_thread");
+            var $menu = $("#menu");
+            var $menu_button = $("#menu-button");
+            var $menu_content = $("#menu-content");
 
-        $("#control .md").click(function () {
-            $markdown.html("<pre>" + content.content + "</pre");
-            $discuss.hide();
-        });
+            $window.resize(function () {
+                $container.width($window.width());
+                $background.width($window.width()).height($window.height());
 
-        $("#control .html").click(function () {
-            $markdown.
-                    html(marked(content.content)).
-                    append('<p class="time">' + content.meta.date + '</p>');
-            $markdown.find(':header[id]:not(h1)').addClass('anchor').click(function (e) {
-                jump('#' + e.target.id);
-            });
-            var img_width = $(".blogarticle p").width();
-            $article.imagesLoaded().progress(function (loded, img) {
-                if (img.isLoaded) {
-                    if (img.img.naturalWidth > img_width) {
-                        $(img.img).css("width", img_width);
+                $background.css("background-size", $background.height() / 1.8);
+                //console.log($background.css("background-size"));
+            }).resize();
+            marked.setOptions({
+                highlight: function (code, lang) {
+                    //console.log("highlight language: " + lang);
+                    //console.log(code);
+                    //console.log("=============================================================================");
+                    if (lang === undefined) {
+                        return hljs.highlightAuto(code).value;
+                    } else if (lang === "text") {
+                        return code;
                     } else {
-                        $(img.img).css("width", img.img.naturalWidth);
+                        //var debug = hljs.highlight(lang, code).value;
+                        //console.log(debug);
+                        return hljs.highlight(lang, code).value;
                     }
                 }
             });
-            if (disable_disqus_on.indexOf(path) < 0) {
-                //console.log(path);
-                $discuss.show();
-            }
+            $menu_button.click(function (a) {
+                $menu.toggle(300);
+            });
+            $article.click(function(a) {
+                if ($menu.css("display") != "none") {
+                    $menu.hide(300);
+                }
+            });
+            $background.click(function(a) {
+                if ($menu.css("display") != "none") {
+                    $menu.hide(300);
+                }
+            });
+
+            menu.forEach(function(value) {
+                var template = `
+                <div class="menu-item" onclick="jump('${value.path}')">
+                    <a href="${value.path}" style="width:0;height:0;display:none;">${value.title}</a>
+                    <div class="menu-item-title">${value.title}</div>
+                    <div class="menu-item-widgets selfclear">
+                        <div class="menu-item-status" ${function(){
+                                if (value.meta.status == "complete") {
+                                    return 'style="color: green;"';
+                                } else {
+                                    return 'style="color: red;"';
+                                }
+                        }()}>${function(){
+                                if (value.meta.status == "complete") {
+                                    return "已完成";
+                                } else {
+                                    return value.meta.status;
+                                }
+                        }()}</div>
+                        <div class="menu-item-date">${value.meta.date}</div>
+                    </div>
+                </div>
+                `.trim();
+                $menu_content.append(template);
+            });
+
+            $("#control .back").click(function () {
+                jump('/');
+                //window.location.href = "/";
+            });
+
+            $("#control .md").click(function () {
+                $markdown.html("<pre>" + content.content + "</pre");
+                $discuss.hide();
+            });
+
+            $("#control .html").click(function () {
+                $markdown.
+                        html(marked(content.content)).
+                        append('<p class="time">' + content.meta.date + '</p>');
+                $markdown.find(':header[id]:not(h1)').addClass('anchor').click(function (e) {
+                    jump('#' + e.target.id);
+                });
+                var img_width = $(".blogarticle p").width();
+                $article.imagesLoaded().progress(function (loded, img) {
+                    if (img.isLoaded) {
+                        if (img.img.naturalWidth > img_width) {
+                            $(img.img).css("width", img_width);
+                        } else {
+                            $(img.img).css("width", img.img.naturalWidth);
+                        }
+                    }
+                });
+                if (disable_disqus_on.indexOf(path) < 0) {
+                    //console.log(path);
+                    $discuss.show();
+                }
+            });
+            $("#control .html").click();
         });
-        $("#control .html").click();
     </script>
 </html>
