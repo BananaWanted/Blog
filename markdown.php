@@ -279,8 +279,9 @@ foreach ($overview as $key => $value) {
                 <div id="menu-content" class="selfclear"></div>
             </div>
             <div class="blogarticle">
-                <div id="markdown">
-                    <noscript><pre><?php echo $output["content"]; ?></pre></noscript>
+                <div id="markdown" style="display: none;" v-bind:style="style">
+                    <pre v-show="show_md">{{ markdown }}</pre>
+                    <div v-show="!show_md" v-html="html"></div>
                 </div>
                 <div id="disqus_thread"></div>
             </div>
@@ -313,6 +314,9 @@ foreach ($overview as $key => $value) {
         function jump(href) {
             window.location.href = href;
         }
+        var encodedStr = (rawStr)=>rawStr.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+            return '&#'+i.charCodeAt(0)+';';
+        });
         
         let $vm;
         
@@ -395,29 +399,35 @@ foreach ($overview as $key => $value) {
                 jump('/');
                 //window.location.href = "/";
             });
-
+            $vm = new Vue({
+                el: "#markdown",
+                data: {
+                    markdown: content.content,
+                    html: marked(content.content) + '<p class="time">' + content.meta.date + '</p>',
+                    show_md: false,
+                    style: {display: "block"}
+                }
+            });
+            $markdown.find(':header[id]:not(h1)').addClass('anchor').click(function (e) {
+                jump('#' + e.target.id);
+            });
+            var img_width = $(".blogarticle p").width();
+            $article.imagesLoaded().progress(function (loded, img) {
+                if (img.isLoaded) {
+                    if (img.img.naturalWidth > img_width) {
+                        $(img.img).css("width", img_width);
+                    } else {
+                        $(img.img).css("width", img.img.naturalWidth);
+                    }
+                }
+            });
             $("#control .md").click(function () {
-                $markdown.html("<pre>" + content.content + "</pre");
+                $vm.show_md = true;
                 $discuss.hide();
             });
 
             $("#control .html").click(function () {
-                $markdown.
-                        html(marked(content.content)).
-                        append('<p class="time">' + content.meta.date + '</p>');
-                $markdown.find(':header[id]:not(h1)').addClass('anchor').click(function (e) {
-                    jump('#' + e.target.id);
-                });
-                var img_width = $(".blogarticle p").width();
-                $article.imagesLoaded().progress(function (loded, img) {
-                    if (img.isLoaded) {
-                        if (img.img.naturalWidth > img_width) {
-                            $(img.img).css("width", img_width);
-                        } else {
-                            $(img.img).css("width", img.img.naturalWidth);
-                        }
-                    }
-                });
+                $vm.show_md = false;
                 if (disable_disqus_on.indexOf(path) < 0) {
                     //console.log(path);
                     $discuss.show();
