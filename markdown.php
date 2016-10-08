@@ -18,6 +18,41 @@
 defined('ZEXEC') or define("ZEXEC", 1);
 require_once 'ZFrame/base.php';
 
+/**
+ * get markdown extension information
+ * @param String $label
+ * @param String $content
+ * @return Array [ [ext beg pos, ext end pos, ext content without label], ... ]
+ */
+function get_markdown_extension($label, &$content) {
+    $ret = [];
+    $delimiter_beg = "```{$label}\n";
+    $delimiter_beg_len = strlen($delimiter_beg);
+    $delimiter_end = "```\n";
+    $delimiter_end_len = strlen($delimiter_end);
+
+    $offset = 0;
+    while (TRUE) {
+        $delimiter_beg_pos = stripos($content, $delimiter_beg, $offset);
+        if ($delimiter_beg_pos !== FALSE) {
+            $offset = $delimiter_beg_pos + $delimiter_beg_len;
+            $delimiter_end_pos = stripos($content, $delimiter_end, $offset);
+            if ($delimiter_beg_pos !== FALSE) {
+                $offset = $delimiter_end_pos + $delimiter_end_len;
+                //$sub = trim(substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len));
+                // don't use trim to keep fomat.
+                $sub = substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len);
+                $ret[] = [$delimiter_beg_pos, $delimiter_end_pos, $sub];
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+    return $ret;
+}
+
 function get_article($path) {
     if (!file_exists($path)) {
         header("HTTP/1.0 404 Not Found");
@@ -26,23 +61,50 @@ function get_article($path) {
     }
 
     $content = file_get_contents($path);
-    $content_len = strlen($content);
     $output = array(
         "title" => "",
         "meta" => array(),
-        "content" => ""
+        "run" => array(),
+        "content" => $content
     );
 
-    $delimiter_beg = "```metadata\n";
-    $delimiter_beg_len = strlen($delimiter_beg);
-    $delimiter_end = "```\n";
-    $delimiter_end_len = strlen($delimiter_end);
+//    $delimiter_beg = "```metadata\n";
+//    $delimiter_beg_len = strlen($delimiter_beg);
+//    $delimiter_end = "```\n";
+//    $delimiter_end_len = strlen($delimiter_end);
+//
+//    $delimiter_beg_pos = stripos($content, $delimiter_beg);
+//    if ($delimiter_beg_pos !== FALSE) {
+//        $delimiter_end_pos = stripos($content, $delimiter_end, $delimiter_beg_pos + $delimiter_beg_len);
+//
+//        $temp = explode("\n", substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len));
+//        foreach ($temp as $value) {
+//            $pos1 = strpos($value, ":");
+//            $pos2 = strpos($value, "=");
+//            if ($pos1 && $pos2) {
+//                $pos = min($pos1, $pos2);
+//            } else {
+//                $pos = $pos1 or $pos2;
+//            }
+//            if ($pos === FALSE) {
+//                continue;
+//            }
+//            $output["meta"][trim(substr($value, 0, $pos))] = trim(substr($value, $pos + 1));
+//        }
+//        $output["content"] = substr_replace($content, "", $delimiter_beg_pos, $delimiter_end_pos - $delimiter_beg_pos + $delimiter_end_len);
+//    } else {
+//        $temp = explode("\n", $content, 3);
+//        $output["meta"]["date"] = trim($temp[1]);
+//        $output["content"] = $temp[0] . "\n" . $temp[2];
+//    }
+    $output["title"] = trim(
+            explode("#", explode("\n", $content, 2)[0]
+            )[1]
+    );
 
-    $delimiter_beg_pos = stripos($content, $delimiter_beg);
-    if ($delimiter_beg_pos !== FALSE) {
-        $delimiter_end_pos = stripos($content, $delimiter_end, $delimiter_beg_pos + $delimiter_beg_len);
-
-        $temp = explode("\n", substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len));
+    $meta_ext = get_markdown_extension("metadata", $content);
+    if (isset($meta_ext[0]) && !empty($meta_ext[0])) {
+        $temp = explode("\n", $meta_ext[0][2]);
         foreach ($temp as $value) {
             $pos1 = strpos($value, ":");
             $pos2 = strpos($value, "=");
@@ -56,17 +118,7 @@ function get_article($path) {
             }
             $output["meta"][trim(substr($value, 0, $pos))] = trim(substr($value, $pos + 1));
         }
-        $output["content"] = substr_replace($content, "", $delimiter_beg_pos, $delimiter_end_pos - $delimiter_beg_pos + $delimiter_end_len);
-    } else {
-        $temp = explode("\n", $content, 3);
-        $output["meta"]["date"] = trim($temp[1]);
-        $output["content"] = $temp[0] . "\n" . $temp[2];
     }
-
-    $output["title"] = trim(
-            explode("#", explode("\n", $content, 2)[0]
-            )[1]
-    );
     if (isset($output["meta"]["keyword"]) && !empty($output["meta"]["keyword"])) {
         $keywords = explode(",", $output["meta"]["keyword"]);
         foreach ($keywords as &$value) {
@@ -74,6 +126,12 @@ function get_article($path) {
         }
         $output["meta"]["keyword"] = $keywords;
     }
+
+    $run_ext = get_markdown_extension("run", $content);
+    foreach ($run_ext as $r) {
+        $output["run"][] = $r[2];
+    }
+
     return $output;
 }
 
@@ -96,11 +154,12 @@ function scan_articles($path) {
 $scan_path = __DIR__ . DIRECTORY_SEPARATOR . "articles";
 $article_path = __DIR__ . $_REQUEST['path'];
 $overview = scan_articles($scan_path);
-
 $output;
 $menu = array();
+$run = array();
 
 if (strpos($_REQUEST['path'], "/articles/") !== 0) {
+    // for articles not in /articles
     $output = get_article($article_path);
 } else {
     $output = $overview[$article_path]["content"];
@@ -111,6 +170,8 @@ foreach ($overview as $key => $value) {
     $temp["path"] = DIRECTORY_SEPARATOR . "articles" . DIRECTORY_SEPARATOR . $value["filename"];
     $menu[] = $temp;
 }
+$run = $output["run"];
+unset($output["run"]);
 
 ?>
 <!DOCTYPE html>
@@ -276,13 +337,41 @@ foreach ($overview as $key => $value) {
             <div id="background"></div>
             <div id="menu-button"></div>
             <div id="menu">
-                <div id="menu-content" class="selfclear"></div>
+                <div id="menu-content" class="selfclear">
+                    <div class="menu-item" v-for="item in menu_items" @click="jump(item.path)">
+                        <a :href="item.path" style="width:0;height:0;display:none;">{{item.title}}</a>
+                        <div class="menu-item-title">{{item.title}}</div>
+                        <div class="menu-item-widgets selfclear">
+                            <div class="menu-item-status" :style="item_style(item)">{{ item_status(item) }}</div>
+                            <div class="menu-item-date">{{item.meta.date}}</div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="blogarticle">
                 <div id="markdown" style="display: none;" v-bind:style="style">
                     <pre v-show="show_md">{{ markdown }}</pre>
                     <div v-show="!show_md" v-html="html"></div>
                 </div>
+                <?php if (count($run) > 0) { ?>
+                    <script>
+                        ;(function(){
+                            let run = () => {
+                                    <?php
+                                    foreach ($run as $script) {
+                                        echo $script;
+                                        echo "\n";
+                                    }
+                                    ?>
+                                };
+                            if (typeof ZFrame != "undefined") {
+                                ZFrame.run = run;
+                            } else {
+                                run();
+                            }
+                        })();
+                    </script>
+                <?php } ?>
                 <div id="disqus_thread"></div>
             </div>
             <div id="control">
@@ -317,16 +406,16 @@ foreach ($overview as $key => $value) {
         var encodedStr = (rawStr)=>rawStr.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
             return '&#'+i.charCodeAt(0)+';';
         });
-        
-        let $vm;
-        
+
+        let $$markdown_vm;
+        let $$menu_vm;
+
         ZFrame.onload(()=>
         {
             var $window = $(window);
             var $container = $("#container");
             var $background = $("#background");
             var $article = $(".blogarticle");
-            var $markdown = $("#markdown");
             var $discuss = $("#disqus_thread");
             var $menu = $("#menu");
             var $menu_button = $("#menu-button");
@@ -341,14 +430,18 @@ foreach ($overview as $key => $value) {
             }).resize();
             marked.setOptions({
                 highlight: function (code, lang) {
-                    //console.log("highlight language: " + lang);
-                    //console.log(code);
-                    //console.log("=============================================================================");
+                    // console.log("highlight language: " + lang);
+                    // console.log(code);
+                    // console.log("=============================================================================");
                     if (lang === undefined) {
                         return hljs.highlightAuto(code).value;
                     } else if (lang === "text") {
                         return code;
-                    } else {
+                    } else if (lang === "metadata") {
+                        return "";
+                    } else if (lang === "run") {
+                        return "";
+                    }else {
                         //var debug = hljs.highlight(lang, code).value;
                         //console.log(debug);
                         return hljs.highlight(lang, code).value;
@@ -368,38 +461,35 @@ foreach ($overview as $key => $value) {
                     $menu.hide(300);
                 }
             });
-
-            menu.forEach(function(value) {
-                var template = `
-                <div class="menu-item" onclick="jump('${value.path}')">
-                    <a href="${value.path}" style="width:0;height:0;display:none;">${value.title}</a>
-                    <div class="menu-item-title">${value.title}</div>
-                    <div class="menu-item-widgets selfclear">
-                        <div class="menu-item-status" ${function(){
-                                if (value.meta.status == "complete") {
-                                    return 'style="color: green;"';
-                                } else {
-                                    return 'style="color: red;"';
-                                }
-                        }()}>${function(){
-                                if (value.meta.status == "complete") {
-                                    return "已完成";
-                                } else {
-                                    return value.meta.status;
-                                }
-                        }()}</div>
-                        <div class="menu-item-date">${value.meta.date}</div>
-                    </div>
-                </div>
-                `.trim();
-                $menu_content.append(template);
+            $$menu_vm = new Vue({
+                el: "#menu-content",
+                data: {
+                    menu_items: menu,
+                    jump: jump
+                },
+                methods: {
+                    item_style(item) {
+                        if (item.meta.status == "complete") {
+                            return {color: "green"};
+                        } else {
+                            return {color: "red"};
+                        }
+                    },
+                    item_status(item) {
+                        if (item.meta.status == "complete") {
+                            return "已完成";
+                        } else {
+                            return item.meta.status;
+                        }
+                    }
+                }
             });
 
             $("#control .back").click(function () {
                 jump('/');
                 //window.location.href = "/";
             });
-            $vm = new Vue({
+            $$markdown_vm = new Vue({
                 el: "#markdown",
                 data: {
                     markdown: content.content,
@@ -408,8 +498,14 @@ foreach ($overview as $key => $value) {
                     style: {display: "block"}
                 }
             });
-            $markdown.find(':header[id]:not(h1)').addClass('anchor').click(function (e) {
+            $("#markdown").find(':header[id]:not(h1)').addClass('anchor').click(function (e) {
                 jump('#' + e.target.id);
+            });
+            $("#markdown").find('script').each((i, e) => {
+                // let script = `\<script\>${e.text}\<\/script\>`;
+                // e.remove();
+                // $("#markdown").append(script);
+                //eval(e.text);
             });
             var img_width = $(".blogarticle p").width();
             $article.imagesLoaded().progress(function (loded, img) {
@@ -422,12 +518,12 @@ foreach ($overview as $key => $value) {
                 }
             });
             $("#control .md").click(function () {
-                $vm.show_md = true;
+                $$markdown_vm.show_md = true;
                 $discuss.hide();
             });
 
             $("#control .html").click(function () {
-                $vm.show_md = false;
+                $$markdown_vm.show_md = false;
                 if (disable_disqus_on.indexOf(path) < 0) {
                     //console.log(path);
                     $discuss.show();
@@ -435,5 +531,9 @@ foreach ($overview as $key => $value) {
             });
             $("#control .html").click();
         });
+
+        if (ZFrame.run instanceof Function) {
+            ZFrame.onload(ZFrame.run);
+        }
     </script>
 </html>
