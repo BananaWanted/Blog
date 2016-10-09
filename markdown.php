@@ -18,37 +18,57 @@
 defined('ZEXEC') or define("ZEXEC", 1);
 require_once 'ZFrame/base.php';
 
-/**
- * get markdown extension information
- * @param String $label
- * @param String $content
- * @return Array [ [ext beg pos, ext end pos, ext content without label], ... ]
- */
-function get_markdown_extension($label, &$content) {
+function rmd_parser(&$content) {
     $ret = [];
-    $delimiter_beg = "```{$label}\n";
-    $delimiter_beg_len = strlen($delimiter_beg);
-    $delimiter_end = "```\n";
-    $delimiter_end_len = strlen($delimiter_end);
-
-    $offset = 0;
-    while (TRUE) {
-        $delimiter_beg_pos = stripos($content, $delimiter_beg, $offset);
-        if ($delimiter_beg_pos !== FALSE) {
-            $offset = $delimiter_beg_pos + $delimiter_beg_len;
-            $delimiter_end_pos = stripos($content, $delimiter_end, $offset);
-            if ($delimiter_beg_pos !== FALSE) {
-                $offset = $delimiter_end_pos + $delimiter_end_len;
-                //$sub = trim(substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len));
-                // don't use trim to keep fomat.
-                $sub = substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len);
-                $ret[] = [$delimiter_beg_pos, $delimiter_end_pos, $sub];
-            } else {
-                break;
+    $pattern = '/(?:\n|^)(`{3,})[ \.]*(\{.*?\}) *\n([\s\S]*?)\s*(?:\1 *)(?=\n|$)/';
+    $matches;
+    if (preg_match_all($pattern, $content, $matches, PREG_SET_ORDER) === FALSE) {
+        Log::addErrorLog("parse r markdown failed");
+        die;
+    }
+    //Log::addRuntimeLog("Rmd match content: \n" . $content);
+    //Log::addRuntimeLog("Rmd match: \n" . var_export($matches, TRUE));
+    foreach ($matches as $match) {
+        $label;
+        $code = $match[3];
+        $opt;
+        if (preg_match('/^\{(\S+)\s*?(?: (.*))?\}$/', $match[2], $label) === FALSE) {
+            Log::addErrorLog("invalid rmd chunk");
+            die;
+        }
+        if (!isset($label[2]) || empty($label[2])) {
+            $label[2] = "";
+        }
+        //Log::addRuntimeLog("Rmd label: \n" . var_export($label, TRUE));
+        $arr = explode(',', $label[2], 2);
+        if (strpos($arr[0], '=') === FALSE) {
+            @$opt = is_string($arr[1]) ? $arr[1] : "";
+        } else {
+            $opt = $label[2];
+        }
+        $arr = explode(',', $opt);
+        $opt = [ 
+            "include"   => FALSE,
+            "echo"      => FALSE,
+            "run"       => FALSE
+            ];
+        foreach($arr as $value) {
+            $pair = explode('=', $value);
+            $pair[0] = trim($pair[0]);
+            if (strlen($pair[0]) > 0) {
+                $pair[1] = json_decode($pair[1]);
+                $opt[$pair[0]] = $pair[1];
+            }
+        }
+        if (isset($opt["engine"])) {
+            if ($opt["engine"] != $label[1] && $label[1] != "r") {
+                Log::addErrorLog("language engine not match");
+                die;
             }
         } else {
-            break;
+            $opt["engine"] = $label[1];
         }
+        $ret[] = ["code" => $code, "opt" => $opt];
     }
     return $ret;
 }
@@ -64,74 +84,49 @@ function get_article($path) {
     $output = array(
         "title" => "",
         "meta" => array(),
-        "run" => array(),
         "content" => $content
     );
-
-//    $delimiter_beg = "```metadata\n";
-//    $delimiter_beg_len = strlen($delimiter_beg);
-//    $delimiter_end = "```\n";
-//    $delimiter_end_len = strlen($delimiter_end);
-//
-//    $delimiter_beg_pos = stripos($content, $delimiter_beg);
-//    if ($delimiter_beg_pos !== FALSE) {
-//        $delimiter_end_pos = stripos($content, $delimiter_end, $delimiter_beg_pos + $delimiter_beg_len);
-//
-//        $temp = explode("\n", substr($content, $delimiter_beg_pos + $delimiter_beg_len, $delimiter_end_pos - $delimiter_beg_pos - $delimiter_beg_len));
-//        foreach ($temp as $value) {
-//            $pos1 = strpos($value, ":");
-//            $pos2 = strpos($value, "=");
-//            if ($pos1 && $pos2) {
-//                $pos = min($pos1, $pos2);
-//            } else {
-//                $pos = $pos1 or $pos2;
-//            }
-//            if ($pos === FALSE) {
-//                continue;
-//            }
-//            $output["meta"][trim(substr($value, 0, $pos))] = trim(substr($value, $pos + 1));
-//        }
-//        $output["content"] = substr_replace($content, "", $delimiter_beg_pos, $delimiter_end_pos - $delimiter_beg_pos + $delimiter_end_len);
-//    } else {
-//        $temp = explode("\n", $content, 3);
-//        $output["meta"]["date"] = trim($temp[1]);
-//        $output["content"] = $temp[0] . "\n" . $temp[2];
-//    }
+    
     $output["title"] = trim(
             explode("#", explode("\n", $content, 2)[0]
             )[1]
     );
 
-    $meta_ext = get_markdown_extension("metadata", $content);
-    if (isset($meta_ext[0]) && !empty($meta_ext[0])) {
-        $temp = explode("\n", $meta_ext[0][2]);
-        foreach ($temp as $value) {
-            $pos1 = strpos($value, ":");
-            $pos2 = strpos($value, "=");
-            if ($pos1 && $pos2) {
-                $pos = min($pos1, $pos2);
-            } else {
-                $pos = $pos1 or $pos2;
+    $rmd = rmd_parser($content);
+    
+    foreach($rmd as $chunk) {
+        if ($chunk["opt"]["engine"] == "metadata") {
+            $temp = explode("\n", $chunk["code"]);
+            foreach ($temp as $value) {
+                $pos1 = strpos($value, ":");
+                $pos2 = strpos($value, "=");
+                if ($pos1 && $pos2) {
+                    $pos = min($pos1, $pos2);
+                } else {
+                    $pos = $pos1 or $pos2;
+                }
+                if ($pos === FALSE) {
+                    continue;
+                }
+                $output["meta"][trim(substr($value, 0, $pos))] = trim(substr($value, $pos + 1));
             }
-            if ($pos === FALSE) {
-                continue;
+            if (isset($output["meta"]["keyword"]) && !empty($output["meta"]["keyword"])) {
+                $keywords = explode(",", $output["meta"]["keyword"]);
+                foreach ($keywords as &$value) {
+                    $value = trim($value);
+                }
+                $output["meta"]["keyword"] = $keywords;
             }
-            $output["meta"][trim(substr($value, 0, $pos))] = trim(substr($value, $pos + 1));
+            
+        } else if (preg_match ("/^javascript|js$/", $chunk["opt"]["engine"])) {
+            if (@$chunk["opt"]["ext"] == "run") {
+                $output["run"][] = $chunk["code"];
+            }
         }
     }
-    if (isset($output["meta"]["keyword"]) && !empty($output["meta"]["keyword"])) {
-        $keywords = explode(",", $output["meta"]["keyword"]);
-        foreach ($keywords as &$value) {
-            $value = trim($value);
-        }
-        $output["meta"]["keyword"] = $keywords;
-    }
-
-    $run_ext = get_markdown_extension("run", $content);
-    foreach ($run_ext as $r) {
-        $output["run"][] = $r[2];
-    }
-
+    
+    //$rmd_chunk = get_rmd_code_chunks($content);
+    
     return $output;
 }
 
@@ -154,24 +149,29 @@ function scan_articles($path) {
 $scan_path = __DIR__ . DIRECTORY_SEPARATOR . "articles";
 $article_path = __DIR__ . $_REQUEST['path'];
 $overview = scan_articles($scan_path);
+$this_article;
+
 $output;
 $menu = array();
 $run = array();
 
 if (strpos($_REQUEST['path'], "/articles/") !== 0) {
     // for articles not in /articles
-    $output = get_article($article_path);
+    $this_article = get_article($article_path);
 } else {
-    $output = $overview[$article_path]["content"];
+    $this_article = $overview[$article_path]["content"];
 }
-foreach ($overview as $key => $value) {
-    $temp = $value["content"];
-    unset($temp["content"]);
+foreach ($overview as $key => &$value) {
+    $temp = array();
+    $temp["title"] = $value["content"]["title"];
+    $temp["meta"] = $value["content"]["meta"];
     $temp["path"] = DIRECTORY_SEPARATOR . "articles" . DIRECTORY_SEPARATOR . $value["filename"];
     $menu[] = $temp;
 }
-$run = $output["run"];
-unset($output["run"]);
+@$run = $this_article["run"];
+$output["title"] = $this_article["title"];
+$output["meta"] = $this_article["meta"];
+$output["content"] = $this_article["content"];
 
 ?>
 <!DOCTYPE html>
@@ -179,10 +179,10 @@ unset($output["run"]);
     <head>
         <meta charset="UTF-8">
         <!--meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' /-->
-        <title><?php echo $output["title"]; ?> - 4Oranges Blog<?php
-            if (isset($output["meta"]["keyword"]) && !empty($output["meta"]["keyword"])) {
+        <title><?php echo $this_article["title"]; ?> - 4Oranges Blog<?php
+            if (isset($this_article["meta"]["keyword"]) && !empty($this_article["meta"]["keyword"])) {
                 echo " - ";
-                echo implode(" | ", $output["meta"]["keyword"]);
+                echo implode(" | ", $this_article["meta"]["keyword"]);
             }
         ?></title>
 
@@ -430,9 +430,6 @@ unset($output["run"]);
             }).resize();
             marked.setOptions({
                 highlight: function (code, lang) {
-                    // console.log("highlight language: " + lang);
-                    // console.log(code);
-                    // console.log("=============================================================================");
                     if (lang === undefined) {
                         return hljs.highlightAuto(code).value;
                     } else if (lang === "text") {
@@ -441,11 +438,16 @@ unset($output["run"]);
                         return "";
                     } else if (lang === "run") {
                         return "";
+                    } else if (lang === "r") {
+                        return code;
                     }else {
                         //var debug = hljs.highlight(lang, code).value;
                         //console.log(debug);
                         return hljs.highlight(lang, code).value;
                     }
+                },
+                rmarkdown: function(code, opt) {
+                    console.log("rmarkdown callback called!");
                 }
             });
             $menu_button.click(function (a) {
