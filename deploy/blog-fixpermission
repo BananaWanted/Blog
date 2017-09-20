@@ -1,9 +1,0 @@
-#!/bin/env bash
-
-TARGET_DIR="/var/www"
-
-chown -R root:root $TARGET_DIR
-chmod 2775 $TARGET_DIR
-find $TARGET_DIR -type d -exec chmod 2775 {} \;
-find $TARGET_DIR -type f -exec chmod 0664 {} \;
-
