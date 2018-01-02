@@ -19,22 +19,27 @@ services:
   wordpress:
     image: wordpress:php7.0-apache
     restart: always
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_TABLE_PREFIX=wp_
 
   api:
     image: python:3
     restart: always
 
   db:
-    image: postgres:10
+    image: mysql
     restart: always
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./mysql_data:/var/lib/mysql
     environment:
-      - PGDATA=/var/lib/postgresql/data
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - PAGER=      
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
 
 networks:
   default:
