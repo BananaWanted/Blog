@@ -1,12 +1,43 @@
 version: "3"
 
 services:
-  nginx:
-    image: nginx
-  wordpress:
-    image: wordpress
-  api:
-    image: python
-  db:
-    image: postgres
 
+  nginx:
+    image: nginx:mainline
+    restart: always
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+    volumes:
+      - ./statics:/usr/share/nginx/html/statics:ro
+      - ./nginx.d:/etc/nginx/conf.d:ro
+      - ./secrets:/secrets:ro
+    networks:
+      - default
+      - expose
+
+  wordpress:
+    image: wordpress:php7.0-apache
+    restart: always
+
+  api:
+    image: python:3
+    restart: always
+
+  db:
+    image: postgres:10
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    environment:
+      - PGDATA=/var/lib/postgresql/data
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - PAGER=      
+
+networks:
+  default:
+    internal: true
+  expose:
+    driver: bridge
