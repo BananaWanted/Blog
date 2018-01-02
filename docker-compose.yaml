@@ -12,9 +12,6 @@ services:
       - ./statics:/usr/share/nginx/html/statics:ro
       - ./nginx.d:/etc/nginx/conf.d:ro
       - ./secrets:/secrets:ro
-    networks:
-      - default
-      - expose
 
   wordpress:
     image: wordpress:php7.0-apache
@@ -41,8 +38,8 @@ services:
       - MYSQL_USER=wordpress
       - MYSQL_PASSWORD=wordpress
 
-networks:
-  default:
-    internal: true
-  expose:
-    driver: bridge
+# networks:
+#   default:
+#     internal: true
+#   expose:
+#     driver: bridge
