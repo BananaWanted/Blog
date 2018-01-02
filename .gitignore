@@ -27,6 +27,6 @@
 *.out
 *.app
 
-/nbproject/private/
 nbproject/*
-.*
+.DS_Store
+._DS_Store
