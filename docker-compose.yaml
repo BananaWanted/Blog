@@ -14,7 +14,7 @@ services:
       - ./secrets:/secrets:ro
 
   wordpress:
-    image: wordpress:php7.0-apache
+    image: wordpress:apache
     restart: always
     environment:
       - WORDPRESS_DB_HOST=db
