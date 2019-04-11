@@ -1,5 +1,4 @@
-#Linux #Trick
-Here're some tricks for obtain public IP on a Linux box.
+Here're some tricks for obtaining public IP on a Linux box.
 ## For Machines with Public IP Directly on NIC
 ```bash
 NIC="eth0"
@@ -14,4 +13,4 @@ IP=$(curl -sL checkip.dyndns.org | grep -Po '\d+\.\d+\.\d+\.\d+')
 ```bash
 IP=$(curl -sL https://myip.ipip.net | grep -Po '\d+\.\d+\.\d+\.\d+')
 ```
-Note: `ip.cn` was popular in favor of `myip.ipip.net` but at the time this post written `ip.cn` is not available through curl due to DDOS protection provided by [Cloudflare](cloudflare.com).
+Note: `ip.cn` was popular in favor of `myip.ipip.net` but at the time this post was written `ip.cn` is not available through curl due to DDOS protection provided by [Cloudflare](cloudflare.com).

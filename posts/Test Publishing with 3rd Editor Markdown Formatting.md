@@ -1,12 +1,12 @@
 # Test Publishing with 3rd Editor Markdown Formatting
 This post is for testing the `publishing` feature provided by some 3rd party editors.
 
-The original markdown file can be viewed [here](https://raw.githubusercontent.com/BananaWanted/Blog/master/posts/Test%20Publishing%20with%203rd%20Editor%20Markdown%20Formatting.md)
+The original markdown file can be viewed [here][1]
 
 Editors tested in this post:
-- [iA Writer](https://ia.net/writer)
-- [Byword](https://bywordapp.com/)
-- [Ulysses](https://ulysses.app/)
+- [iA Writer][2]
+- [Byword][3]
+- [Ulysses][4]
 
 This post is published with latest macOS editions as of the commit date on GitHub.
 
@@ -49,33 +49,28 @@ function
 /* */
 ```
 ### whitespace indented
-    Plain text with some keywords like:
-    class
-    def
-    function
-    #
-    //
-    /* */
-## **Bold** *Italic* ~~Strikethrough~~
+```
+Plain text with some keywords like:
+class
+def
+function
+#
+//
+/* */
+```
+## **Bold** *Italic* \~\~Strikethrough\~\\~
 ### asterisks
-**bold text with ~~*double*~~ asterisks ~~‌surrounded~~** *~~really~~*
+**bold text with \~\~*double*\~\~ asterisks \~\~‌surrounded\~\~** *\~\~really\~\~*
 ### underscores
-__bold text with ~~_double_~~ underscores ~~surrounded~~__ _~~really~~_
-## [Links](#Links)
-[External link to example site](http://example.com/) and
-[internal link to TOC](#TOC)
+\__bold text with \~\~_double_\~\~ underscores \~\~surrounded\~\~\_\_ _\~\~really\~\~_ ## [Links][5]
+[External link to example site][6] and
+[internal link to TOC][7]
 
-Footnote 1 link[^first].
+Footnote 1 link[^1].
 
-Footnote 2 link[^second].
+Footnote 2 link[^2].
 
-Duplicated footnote reference[^second].
-
-[^first]: Footnote **can have markup**
-
-    and multiple paragraphs.
-
-[^second]: Footnote text.
+Duplicated footnote reference[^3].
 
 # Newlines and Trailing Spaces
 P1 and
@@ -89,9 +84,9 @@ P5 and
 P6 with nothing in between should be folded into one line
 # Quote
 > This is the first level of quoting.
->
+> 
 > > This is nested blockquote.
->
+> 
 > Back to the first level.
 
 # Lists
@@ -144,7 +139,23 @@ P6 with nothing in between should be folded into one line
 | c1r2 | c2r2 |
 
 # Hashtags
-#markdown #editor
+# markdown #editor
 # TOC
 
 {{TOC}}
+
+[^1]:	Footnote **can have markup**
+
+	and multiple paragraphs.
+
+[^2]:	Footnote text.
+
+[^3]:	Footnote text.
+
+[1]:	https://raw.githubusercontent.com/BananaWanted/Blog/master/posts/Test%20Publishing%20with%203rd%20Editor%20Markdown%20Formatting.md
+[2]:	https://ia.net/writer
+[3]:	https://bywordapp.com/
+[4]:	https://ulysses.app/
+[5]:	#Links
+[6]:	http://example.com/
+[7]:	#TOC
