@@ -1,8 +1,13 @@
 # Test Publishing with 3rd Editor Markdown Formatting
-[iA Writer](https://ia.net/writer)
-[Byword](https://bywordapp.com/)
-[Ulysses](https://ulysses.app/)
-macOS editions only
+This post is for testing the `publishing` feature provided by some 3rd party editors.
+
+The original markdown file can be viewed [here](https://raw.githubusercontent.com/BananaWanted/Blog/master/posts/Test%20Publishing%20with%203rd%20Editor%20Markdown%20Formatting.md)
+
+Editors tested in this post:
+- [iA Writer](https://ia.net/writer)
+- [Byword](https://bywordapp.com/)
+- [Ulysses](https://ulysses.app/)
+Tested with latest macOS editions as of the commit date on GitHub.
 
 # Headings
 # H1 Heading ABCD abcd 1234 ?:'";,.!&
@@ -42,19 +47,26 @@ function
 //
 /* */
 ```
+### whitespace indented
+    Plain text with some keywords like:
+    class
+    def
+    function
+    #
+    //
+    /* */
 ## **Bold** *Italic* ~~Strikethrough~~
 ### asterisks
 **bold text with ~~*double*~~ asterisks ~~‌surrounded~~** *~~really~~*
 ### underscores
 __bold text with ~~_double_~~ underscores ~~surrounded~~__ _~~really~~_
 ## [Links](#Links)
-This is [an example](http://example.com/) inline link.
-[link to TOC](#TOC)
+[External link to example site](http://example.com/) and
+[internal link to TOC](#TOC)
+
 Footnote 1 link[^first].
 
 Footnote 2 link[^second].
-
-Inline footnote^[Text of inline footnote] definition.
 
 Duplicated footnote reference[^second].
 
@@ -69,7 +81,7 @@ P1 and
 
 P2 with black line in between
 
-P3 and 
+P3 and  
 P4 with whitespace at end of P3, no blank line in between
 
 P5 and
