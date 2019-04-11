@@ -7,7 +7,8 @@ Editors tested in this post:
 - [iA Writer](https://ia.net/writer)
 - [Byword](https://bywordapp.com/)
 - [Ulysses](https://ulysses.app/)
-Tested with latest macOS editions as of the commit date on GitHub.
+
+This post is published with latest macOS editions as of the commit date on GitHub.
 
 # Headings
 # H1 Heading ABCD abcd 1234 ?:'";,.!&
